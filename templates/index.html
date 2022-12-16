@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block header %}
+{% endblock header %}
+
+{% block content %}
+    <div align="right">
+        <a href="/logout" role="button">ログアウト</a>
+    </div><br>
+
+<div class="form_listadd" style="width: 300px;">
+<form action='/new' method="post" class="add_list">
+    <input type="date" name="use_date"><br>
+    <select name="use_category">
+        <option value="">ー</option>
+        <option value="食費">食費</option>
+        <option value="日用品">日用品</option>
+        <option value="その他">その他</option>
+    </select><br>
+
+    <label for="">メモ</label>
+    <input type="text" name="detail_text"><br>
+    <label for="">価格</label>
+    <input type="number" name="price" required min="0">
+    <input type="submit" value="追加">
+</form>
+</div>
+
+<form action="conditions" method="post">
+    <select name="year_conditions">
+        <option value="">ー</option>
+        <option value="2021">2021</option>
+        <option value="2022">2022</option>
+        <option value="2023">2023</option>
+    </select>
+    <select name="month_conditions">
+        <option value="">ー</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+    </select>
+    <select name="category_conditions">
+        <option value="">ー</option>
+        <option value="食費">食費</option>
+        <option value="日用品">日用品</option>
+        <option value="その他">その他</option>
+    </select>
+    <input type="submit" value="検索">
+</form>
+
+<div class="moneylist" style="height: 500px;overflow: scroll;width: 800px;">
+<table>
+    <thead class="list_head">
+        <tr>
+            <th class="date_col">日付</th>
+            <th class="category_col">カテゴリー</th>
+            <th class="detail_col">メモ</th>
+            <th class="price_col">支出</th>
+            <th class="delete_button"></th>
+        </tr>
+    </thead>
+
+    <tbody>
+    {% for money in moneys %}
+        <tr>
+            <td class="date_col">{{ money.use_date }}</td>
+            <td class="category_col">{{ money.use_category }}</td>
+            <td class="detail_col">{{ money.detail_text }}</td>
+            <td class="price_col">{{ money.price }}</td>
+            <td class="delete_button" style="padding: 4px 12px;">
+            <form action="/delete" method="post" class="delete_button">
+                <button type="submit" name="id" value="{{ money.id }}" class="delete_button"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                  </svg>
+                  </button>
+            </form>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+
+    <tfoot class="list_foot">
+        <tr>
+            <td class="date_col" id="sum"></td>
+            <td class="category_col" id="sum"></td>            
+            <td class="detail_col" id="sum" align="right">合計金額</td>                
+            <td class="price_col" id="sum">{{ sum_price }}</td> 
+            <td class="delete_button"></td>           
+        </tr>
+    </tfoot>
+
+</table>
+</div>
+
+
+
+{% endblock content %}

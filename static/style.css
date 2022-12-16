@@ -1,0 +1,101 @@
+@charset "utf-8";
+
+.moneylist table{
+    border-collapse: separate;
+    border-spacing: 0px 0px;
+    border-left: solid 1px #333;
+}
+
+.moneylist td:not(.delete_button){
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 0;
+}
+
+.moneylist tr:nth-child(2n):not(tfoot tr){
+    background-color: #f0f2f7;
+}
+
+
+form.add_list{
+    background-color: #f0f2f7;
+    width: 300px;
+}
+
+
+.moneylist th, td{
+    padding: 4px 12px;
+    border-right: solid 1px rgb(176, 174, 174);
+    border-bottom: solid 1px rgb(176, 174, 174);
+}
+
+table th{
+    position: sticky;
+    top: 0;
+    background: white;
+}
+table tfoot{
+    position: sticky;
+    bottom: 0;
+    background: white;
+}
+
+
+/* body.base_body{
+    overflow: hidden;
+} */ 
+
+.moneylist tfoot td{
+    border-top: solid 1px rgb(176, 174, 174);
+}
+
+.moneylist thead th{
+    border-top: solid 1px rgb(176, 174, 174);
+}
+
+.moneylist .date_col{
+    width: 96px;
+}
+
+.moneylist .category_col{
+    width: 98px;
+}
+
+.moneylist .price_col{
+    width: 110px;
+}
+
+.moneylist .detail_col{
+    width: 271px;
+}
+
+.moneylist .delete_button form, button{
+    width: 30px;
+    height: 30px;
+}
+
+.form_listadd{
+    position: relative;
+    top: 120px;
+    left: 1120px;
+}
+
+div.moneylist{
+    position: relative;
+    left: 30px;
+    top: 40px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
