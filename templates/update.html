@@ -4,5 +4,21 @@
 {% endblock header %}
 
 {% block content %}
-
+<div class="form_listadd" style="width: 300px;">
+    <form action='/u' method="post" class="update_list">
+        <input type="date" name="use_date" value="{{ list.use_date }}"><br>
+        <select name="use_category">
+            <option value="">ー</option>
+            <option value="食費">食費</option>
+            <option value="日用品">日用品</option>
+            <option value="その他">その他</option>
+        </select><br>
+    
+        <label for="">メモ</label>
+        <input type="text" name="detail_text" value="{{ list.detail_text }}"><br>
+        <label for="">価格</label>
+        <input type="number" name="price" required min="0" value="{{ list.price }}">
+        <input type="submit" value="{{ list.id }}" name="id">
+    </form>
+</div>
 {% endblock content %}

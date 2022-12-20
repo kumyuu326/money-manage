@@ -3,7 +3,7 @@
 .moneylist table{
     border-collapse: separate;
     border-spacing: 0px 0px;
-    border-left: solid 1px #333;
+    border-left: solid 1px rgb(176, 174, 174);
 }
 
 .moneylist td:not(.delete_button){
@@ -25,9 +25,15 @@ form.add_list{
 
 
 .moneylist th, td{
-    padding: 4px 12px;
     border-right: solid 1px rgb(176, 174, 174);
     border-bottom: solid 1px rgb(176, 174, 174);
+}
+.moneylist th, td:not(.delete_button, .update_button){
+    padding: 4px 12px;
+}
+
+th.delete_button, td.delete_button{
+    border-right: none;
 }
 
 table th{
@@ -70,9 +76,16 @@ table tfoot{
     width: 271px;
 }
 
-.moneylist .delete_button form, button{
+.moneylist .delete_button form, button, .update_button form, button{
     width: 30px;
     height: 30px;
+}
+
+.moneylist .delete_button tr, th, td{
+    width: 26px;
+}
+.moneylist .update_button tr, th, td{
+    width: 21px;
 }
 
 .form_listadd{

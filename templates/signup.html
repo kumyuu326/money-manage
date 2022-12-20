@@ -1,4 +1,9 @@
 {% extends 'base.html' %}
+
+{% block header %}
+<link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+{% endblock header %}
+
 {% block content %}
 <h1>新規登録</h1>
 <form method="post">
@@ -9,4 +14,4 @@
     <input type="submit" value="新規登録">
 </form><br>
 <a href="http://127.0.0.1:5000">Topに戻る</a>
-{% endblock %}
+{% endblock content %}

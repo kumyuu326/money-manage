@@ -1,5 +1,6 @@
 from crypt import methods
 from datetime import datetime, date
+from inspect import istraceback
 import os
 from flask import Flask, render_template, request, redirect, session, url_for
 from flask_login import UserMixin, LoginManager, current_user, login_required, login_user, logout_user
@@ -157,12 +158,32 @@ def conditions():
                 sum_price = db.session.query(func.sum(Money.price)).filter(Money.year==int(year_con)).filter(Money.month==int(month_con)).filter(Money.use_category==category_con).filter(Money.username==current_user.username).scalar()         
             return render_template('index.html', moneys=moneys, sum_price=sum_price)
 
-@app.route('/update/<int:id>', methods=['POST', 'GET'])
+@app.route('/update', methods=['POST', 'GET'])
 @login_required
 def update():
-    id = request.form["id"]
-    if request.method == 'GET':
-        return render_template('update.html')
+    if request.method == 'POST':
+        id = request.form["id"]
+        list = Money.query.filter_by(id=id).one()
+
+        return render_template('update.html', list=list)
+
+@app.route('/u', methods=['POST', 'GET'])
+@login_required
+def u():
+    if request.method == 'POST':
+        id = request.form["id"]
+        list = Money.query.filter_by(id=id).one()
+        list.use_date = request.form["use_date"]
+        list.use_date = datetime.strptime(list.use_date, '%Y-%m-%d')
+        list.use_category = request.form["use_category"]
+        list.detail_text = request.form["detail_text"]
+        list.price = request.form["price"]
+        list.year = int(list.use_date.year)
+        list.month = int(list.use_date.month)
+
+        db.session.commit()
+        return redirect('/index')
+
 
 if __name__=='__main__':
     app.run()
