@@ -191,5 +191,5 @@ def u():
         return redirect('/index')
 
 
-if __name__=='__main__':aaaaa
+if __name__=='__main__':
     app.run()
