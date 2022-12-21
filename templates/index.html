@@ -15,13 +15,14 @@
     <select name="use_category">
         <option value="">ー</option>
         <option value="食費">食費</option>
+        <option value="収入">収入</option>
         <option value="日用品">日用品</option>
         <option value="その他">その他</option>
     </select><br>
 
     <label for="">メモ</label>
     <input type="text" name="detail_text"><br>
-    <label for="">価格</label>
+    <label for="">金額</label>
     <input type="number" name="price" required min="0">
     <input type="submit" value="追加">
 </form>
@@ -52,6 +53,7 @@
     <select name="category_conditions">
         <option value="">ー</option>
         <option value="食費">食費</option>
+        <option value="収入">収入</option>
         <option value="日用品">日用品</option>
         <option value="その他">その他</option>
     </select>
@@ -67,7 +69,7 @@
             <th class="date_col">日付</th>
             <th class="category_col">カテゴリー</th>
             <th class="detail_col">メモ</th>
-            <th class="price_col">支出</th>
+            <th class="price_col">金額</th>
             <th class="delete_button"></th>
             <th class="update_button"></th>
         </tr>
@@ -106,7 +108,7 @@
         <tr>
             <td class="date_col" id="sum"></td>
             <td class="category_col" id="sum"></td>            
-            <td class="detail_col" id="sum" align="right">合計金額</td>                
+            <td class="detail_col" id="sum" align="right">収支</td>                
             <td class="price_col" id="sum">{{ sum_price }}</td> 
             <td class="delete_button"></td>
             <td class="update_button"></td>           

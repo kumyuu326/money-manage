@@ -10,13 +10,14 @@
         <select name="use_category">
             <option value="">ー</option>
             <option value="食費">食費</option>
+            <option value="収入">収入</option>
             <option value="日用品">日用品</option>
             <option value="その他">その他</option>
         </select><br>
     
         <label for="">メモ</label>
         <input type="text" name="detail_text" value="{{ list.detail_text }}"><br>
-        <label for="">価格</label>
+        <label for="">金額</label>
         <input type="number" name="price" required min="0" value="{{ list.price }}">
         <input type="submit" value="{{ list.id }}" name="id">
     </form>

@@ -109,6 +109,8 @@ def new():
         use_category = request.form.get('use_category')
         detail_text = request.form.get('detail_text')
         price = request.form.get('price')
+        if use_category != '収入':
+            price = str(int(price)*-1)
         year = int(use_date.year)
         month = int(use_date.month)
 
@@ -164,6 +166,8 @@ def update():
     if request.method == 'POST':
         id = request.form["id"]
         list = Money.query.filter_by(id=id).one()
+        if list.price < 0:
+            list.price = str(int(list.price)*-1)
 
         return render_template('update.html', list=list)
 
@@ -178,6 +182,8 @@ def u():
         list.use_category = request.form["use_category"]
         list.detail_text = request.form["detail_text"]
         list.price = request.form["price"]
+        if list.use_category != '収入':
+            list.price = str(int(list.price)*-1)
         list.year = int(list.use_date.year)
         list.month = int(list.use_date.month)
 
