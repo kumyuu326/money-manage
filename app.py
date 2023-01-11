@@ -1,6 +1,5 @@
 from crypt import methods
 from datetime import datetime, date
-from inspect import istraceback
 import os
 from flask import Flask, render_template, request, redirect, session, url_for
 from flask_login import UserMixin, LoginManager, current_user, login_required, login_user, logout_user
@@ -109,8 +108,6 @@ def new():
         use_category = request.form.get('use_category')
         detail_text = request.form.get('detail_text')
         price = request.form.get('price')
-        if use_category != '収入':
-            price = str(int(price)*-1)
         year = int(use_date.year)
         month = int(use_date.month)
 
@@ -182,8 +179,6 @@ def u():
         list.use_category = request.form["use_category"]
         list.detail_text = request.form["detail_text"]
         list.price = request.form["price"]
-        if list.use_category != '収入':
-            list.price = str(int(list.price)*-1)
         list.year = int(list.use_date.year)
         list.month = int(list.use_date.month)
 
