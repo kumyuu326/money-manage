@@ -76,12 +76,12 @@ table tfoot{
     width: 271px;
 }
 
-.moneylist .delete_button form, button, .update_button form, button{
+.moneylist .delete_button form, .moneylist .delete_button button, .update_button form, .update_button button{
     width: 30px;
     height: 30px;
 }
 
-.moneylist .delete_button tr, th, td{
+.moneylist .delete_button tr, .moneylist .delete_button th, .moneylist .delete_button td{
     width: 26px;
 }
 .moneylist .update_button tr, th, td{
@@ -97,7 +97,7 @@ table tfoot{
     margin-left: 10px;
 }
 
-.tab_wrap{margin:10px auto;}
+.tab_wrap{margin: 25px auto;}
 input[type="radio"]{display:none;}
 .tab_area{font-size:0; margin:0 10px;}
 .tab_area label{width:150px; margin:0 5px; display:inline-block; padding:12px 0; color:#999; background:#ddd; text-align:center; font-size:13px; cursor:pointer; transition:ease 0.2s opacity;}
@@ -109,6 +109,151 @@ input[type="radio"]{display:none;}
 #tab1:checked ~ .panel_area #panel1{display:block;}
 #tab2:checked ~ .tab_area .tab2_label{background:#fff; color:#000;}
 #tab2:checked ~ .panel_area #panel2{display:block;}
+
+.header01 {
+    padding: 16px 24px;
+    background-color: #fafafa;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  h1.header01-logo{
+      color: #267fc2;
+      size: 1.2;
+  }
+  
+  .header01-logo {
+    font-weight: bold;
+    font-size: 20px;
+  }
+  
+  .header01-list {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    font-size: 16px;
+    font-weight: bold;
+  }
+  
+  .header01-item--contact {
+    background-color: #2486d1;
+    color: #fff;
+    padding: 6px 16px;
+    border-radius: 6px;
+  }
+  
+  .header01 a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .header01 ul{
+      padding-left: 0;
+  }
+
+  .header01 li{
+      list-style: none;
+  }
+
+  .select{
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+}
+
+.select::after {
+    position: absolute;
+    right: 15px;
+    width: 10px;
+    height: 7px;
+    background-color: #000000;
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    content: '';
+    pointer-events: none;
+}
+
+.select select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    min-width: 120px;
+    height: 40px;
+    padding: 5px 50px 5px 15px;
+    border: 1px solid #a8a8a8;
+    border-radius: 25px;
+    background-color: #fff;
+    color: #000000;
+    cursor: pointer;
+}
+
+
+
+.btn:link,
+.btn:visited {
+ text-transform: uppercase;
+ text-decoration: none;
+ color: rgb(27, 27, 27);
+ padding: 10px 30px;
+ border: 1px solid;
+ border-radius: 1000px;
+ display: inline-block;
+ transition: all .2s;
+ position: relative;
+}
+
+.btn:hover {
+ transform: translateY(-5px);
+ box-shadow: 0 10px 20px rgba(27, 27, 27, .5);
+}
+
+.btn:active {
+ transform: translateY(-3px);
+}
+
+.btn::after {
+ content: "";
+ display: inline-block;
+ height: 100%;
+ width: 100%;
+ border-radius: 100px;
+ top: 0;
+ left: 0;
+ position: absolute;
+ z-index: -1;
+ transition: all .3s;
+}
+
+.btn:hover::after {
+ background-color: rgb(0, 238, 255);
+ transform: scaleX(1.4) scaleY(1.5);
+ opacity: 0;
+}
+input.btn{
+  background: transparent;
+  border: 1px solid #a8a8a8;
+  width: 60px;
+  height: 30px;
+  border-radius: 10px;
+}
+
+.f_conditions{
+    margin-top: 20px;
+}
+
+.add_button{
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+}
+
+.add_button button{
+    background: transparent;
+    width: 50px;
+    height: 50px;
+    border: 1px solid #a8a8a8;
+    border-radius: 75px;
+}
 
 
 

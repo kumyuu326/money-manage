@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+{% endblock header %}
+
+{% block content %}
+<header class="header01">
+    <h1 class="header01-logo">LOGO</h1>
+
+    <nav class="header01-nav">
+        <ul class="header01-list">
+            <li class="header01-item"><a href="/a">統計</a></li>
+            <li class="header01-item"><a href="/index">リスト</a></li>
+            <li class="header01-item"><a href="">グラフ</a></li>
+            <li class="header01-item header01-item--contact"><a href="/logout" role="button">ログアウト</a></li>
+        </ul>
+    </nav>
+</header>
+{% endblock content %}

@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block header %}
+{% endblock header %}
+
+{% block content %}
+
+<div class="form_listadd" style="width: 300px;">
+    <form action='/new' method="post" class="add_list">
+        <input type="date" name="use_date"><br>
+        <select name="use_category">
+            <option value="">ー</option>
+            <option value="食費">食費</option>
+            <option value="収入">収入</option>
+            <option value="日用品">日用品</option>
+            <option value="その他">その他</option>
+        </select><br>
+    
+        <label for="">メモ</label>
+        <input type="text" name="detail_text"><br>
+        <label for="">金額</label>
+        <input type="number" name="price" required min="0">
+        <input type="submit" value="追加">
+    </form>
+    </div>
+
+{% endblock content %}

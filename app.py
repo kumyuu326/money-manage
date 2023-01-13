@@ -72,9 +72,14 @@ def login():
         user = User.query.filter_by(username=username).first()
         if check_password_hash(user.password, password):
             login_user(user)
-            return redirect('/index')
+            return redirect('/a')
     else:
         return render_template('login.html')
+
+@app.route('/a', methods=['GET', 'POST'])
+@login_required
+def a():
+    return render_template('a.html')
 
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
@@ -116,6 +121,9 @@ def new():
         db.session.commit()
 
         return redirect('/index')
+
+    else:
+        return render_template('new.html')
 
 @app.route('/conditions', methods=['POST', 'GET'])
 @login_required

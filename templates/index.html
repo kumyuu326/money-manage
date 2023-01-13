@@ -5,38 +5,42 @@
 {% endblock header %}
 
 {% block content %}
-    <div align="right">
-        <a href="/logout" role="button">ログアウト</a>
-    </div><br>
+<header class="header01">
+    <h1 class="header01-logo">LOGO</h1>
 
-<div class="form_listadd" style="width: 300px;">
-<form action='/new' method="post" class="add_list">
-    <input type="date" name="use_date"><br>
-    <select name="use_category">
-        <option value="">ー</option>
-        <option value="食費">食費</option>
-        <option value="収入">収入</option>
-        <option value="日用品">日用品</option>
-        <option value="その他">その他</option>
-    </select><br>
+    <nav class="header01-nav">
+        <ul class="header01-list">
+            <li class="header01-item"><a href="/a">統計</a></li>
+            <li class="header01-item"><a href="/index">リスト</a></li>
+            <li class="header01-item"><a href="">グラフ</a></li>
+            <li class="header01-item header01-item--contact"><a href="/logout" role="button">ログアウト</a></li>
+        </ul>
+    </nav>
+</header>
 
-    <label for="">メモ</label>
-    <input type="text" name="detail_text"><br>
-    <label for="">金額</label>
-    <input type="number" name="price" required min="0">
-    <input type="submit" value="追加">
-</form>
+<div align="right" class="add_button">
+    <form action="/new" method="get">
+        <button type="submit">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>              
+        </button>
+    </form>
 </div>
 
-<form action="conditions" method="post">
-    <select name="year_conditions">
-        <option value="">ー</option>
+<div class="f_conditions">
+    <form action="conditions" method="post">
+        <div class="select">
+            <select name="year_conditions">
+        <option value="">年</option>
         <option value="2021">2021</option>
         <option value="2022">2022</option>
         <option value="2023">2023</option>
-    </select>
-    <select name="month_conditions">
-        <option value="">ー</option>
+            </select>
+        </div>
+        <div class="select">
+            <select name="month_conditions">
+        <option value="">月</option>
         <option value="1">1</option>
         <option value="2">2</option>
         <option value="3">3</option>
@@ -49,28 +53,32 @@
         <option value="10">10</option>
         <option value="11">11</option>
         <option value="12">12</option>
-    </select>
-    <select name="category_conditions">
-        <option value="">ー</option>
+            </select>
+        </div>
+        <div class="select">
+            <select name="category_conditions">
+        <option value="">カテゴリー</option>
         <option value="食費">食費</option>
         <option value="収入">収入</option>
         <option value="日用品">日用品</option>
         <option value="その他">その他</option>
-    </select>
-    <input type="submit" value="検索">
-</form>
+            </select>
+        </div>
+        <input type="submit" value="検索" class="btn"> 
+    </form>
+</div>
 
 <div class="tab_wrap">
     <input type="radio" name="tab_btn" id="tab1" checked>
     <input type="radio" name="tab_btn" id="tab2">
 
 <div class="tab_area">
-    <label for="tab1" class="tab1_label">tab1</label>
-    <label for="tab2" class="tab2_label">tab2</label>
+    <label for="tab1" class="tab1_label">支出</label>
+    <label for="tab2" class="tab2_label">収入</label>
 </div>
 
 <div class="panel_area">
-<div class="moneylist" id="panel1" style="height: 500px;overflow: scroll;width: 900px;">
+<div class="moneylist" id="panel1" style="height: 488px;overflow: scroll;width: 900px;">
 <table>
     <thead class="list_head">
         <tr>
@@ -87,9 +95,9 @@
     {% for money in moneys %}
         <tr>
             <td class="date_col">{{ money.use_date }}</td>
-            <td class="category_col">{{ money.use_category }}</td>
+            <td class="category_col" align="center">{{ money.use_category }}</td>
             <td class="detail_col">{{ money.detail_text }}</td>
-            <td class="price_col">{{ money.price }}</td>
+            <td class="price_col" align="right">{{ money.price }}</td>
             <td class="delete_button" style="padding: 4px; padding-left: 12px;">
             <form action="/delete" method="post" class="delete_button">
                 <button type="submit" name="id" value="{{ money.id }}" class="delete_button">
@@ -116,8 +124,8 @@
         <tr>
             <td class="date_col" id="sum"></td>
             <td class="category_col" id="sum"></td>            
-            <td class="detail_col" id="sum" align="right">収支</td>                
-            <td class="price_col" id="sum">{{ sum_price }}</td> 
+            <td class="detail_col" id="sum" align="right">総支出</td>                
+            <td class="price_col" id="sum" align="right">{{ sum_price }}</td> 
             <td class="delete_button"></td>
             <td class="update_button"></td>           
         </tr>
@@ -126,7 +134,7 @@
 </table>
 </div>
 
-<div class="moneylist" id="panel2" style="height: 500px;overflow: scroll;width: 900px;">
+<div class="moneylist" id="panel2" style="height: 488px;overflow: scroll;width: 900px;">
     <table>
         <thead class="list_head">
             <tr>
@@ -143,9 +151,9 @@
         {% for money in moneys %}
             <tr>
                 <td class="date_col">{{ money.use_date }}</td>
-                <td class="category_col">{{ money.use_category }}</td>
+                <td class="category_col" align="center">{{ money.use_category }}</td>
                 <td class="detail_col">{{ money.detail_text }}</td>
-                <td class="price_col">{{ money.price }}</td>
+                <td class="price_col" align="right">{{ money.price }}</td>
                 <td class="delete_button" style="padding: 4px; padding-left: 12px;">
                 <form action="/delete" method="post" class="delete_button">
                     <button type="submit" name="id" value="{{ money.id }}" class="delete_button">
@@ -172,8 +180,8 @@
             <tr>
                 <td class="date_col" id="sum"></td>
                 <td class="category_col" id="sum"></td>            
-                <td class="detail_col" id="sum" align="right">wa</td>                
-                <td class="price_col" id="sum">{{ sum_price }}</td> 
+                <td class="detail_col" id="sum" align="right">総収入</td>                
+                <td class="price_col" id="sum" align="right">{{ sum_price }}</td> 
                 <td class="delete_button"></td>
                 <td class="update_button"></td>           
             </tr>
