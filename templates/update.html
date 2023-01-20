@@ -8,18 +8,48 @@
     <form action='/u' method="post" class="update_list">
         <input type="date" name="use_date" value="{{ list.use_date }}"><br>
         <select name="use_category">
+            {% if list.use_category == '食費' %}
+            <option value="食費">食費</option>
+            <option value="">ー</option>
+            <option value="収入">収入</option>
+            <option value="日用品">日用品</option>
+            <option value="その他">その他</option>
+
+            {% elif list.use_category == '収入' %}
+            <option value="収入">収入</option>
+            <option value="">ー</option>
+            <option value="食費">食費</option>
+            <option value="日用品">日用品</option>
+            <option value="その他">その他</option>
+
+            {% elif list.use_category == '日用品' %}
+            <option value="日用品">日用品</option>
+            <option value="">ー</option>
+            <option value="食費">食費</option>
+            <option value="収入">収入</option>
+            <option value="その他">その他</option>
+
+            {% elif list.use_category == 'その他' %}
+            <option value="その他">その他</option>
+            <option value="">ー</option>
+            <option value="食費">食費</option>
+            <option value="収入">収入</option>
+            <option value="日用品">日用品</option>
+
+            {% else %}
             <option value="">ー</option>
             <option value="食費">食費</option>
             <option value="収入">収入</option>
             <option value="日用品">日用品</option>
             <option value="その他">その他</option>
+            {% endif %}
         </select><br>
     
         <label for="">メモ</label>
         <input type="text" name="detail_text" value="{{ list.detail_text }}"><br>
         <label for="">金額</label>
         <input type="number" name="price" required min="0" value="{{ list.price }}">
-        <input type="submit" value="{{ list.id }}" name="id">
+        <button type="submit" value="{{ list.id }}" name="id">更新</button>
     </form>
 </div>
 {% endblock content %}

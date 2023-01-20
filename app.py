@@ -1,5 +1,5 @@
 from crypt import methods
-from datetime import datetime, date
+import datetime
 import os
 from flask import Flask, render_template, request, redirect, session, url_for
 from flask_login import UserMixin, LoginManager, current_user, login_required, login_user, logout_user
@@ -18,6 +18,7 @@ db = SQLAlchemy(app)
 
 
 
+#ユーザー名、パスワード
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), nullable=False, unique=True)
@@ -26,6 +27,7 @@ class User(UserMixin, db.Model):
         self.username = username
         self.password = password
 
+#支出リスト
 class Money(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(50))
@@ -35,6 +37,7 @@ class Money(db.Model):
     price = db.Column(db.Integer)
     year = db.Column(db.Integer)
     month = db.Column(db.Integer)
+
     
 db.create_all()
 
@@ -45,10 +48,12 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
+#トップページ
 @app.route('/', methods=['POST', 'GET'])
 def top():
     return render_template('top.html')
 
+#サインアップ
 @app.route('/signup', methods=['GET','POST'])
 def signup():
     if request.method == "POST":
@@ -63,6 +68,7 @@ def signup():
     else:
         return render_template('signup.html')
 
+#ログイン
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -81,19 +87,85 @@ def login():
 def a():
     return render_template('a.html')
 
+#現在の年月のリスト
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
-    moneys = Money.query.filter(Money.username==current_user.username).order_by(desc(Money.use_date)).all()
-    sum_price = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username).scalar()
-    return render_template('index.html', moneys=moneys, sum_price=sum_price)
+    today = datetime.date.today()
+    today_year = today.year
+    today_month = today.month
 
+    if request.method == 'POST':
+        up = request.form['up']
+        if up == '1':
+            if today_month==12:
+                today_year += 1
+                today_month = 1
+            else:
+                today_month += 1
+
+        else:
+            if today_month==1:
+                today_year -= 1
+                today_month = 12
+            
+            else:
+                today_month -= 1
+
+        return redirect(url_for('ind', today_year=today_year, today_month=today_month))
+
+    elif request.method == 'GET':
+        moneys = Money.query.filter(Money.username==current_user.username).filter(Money.year==today_year).filter(Money.month==today_month).filter(Money.use_category!='収入').order_by(desc(Money.use_date)).all()
+        sum_price = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username).filter(Money.year==today_year).filter(Money.month==today_month).filter(Money.use_category!='収入').scalar()
+        incomes = Money.query.filter(Money.username==current_user.username).filter(Money.year==today_year).filter(Money.month==today_month).filter(Money.use_category=='収入').order_by(desc(Money.use_date)).all()
+        sum_income = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username).filter(Money.year==today_year).filter(Money.month==today_month).filter(Money.use_category=='収入').scalar()
+        button_sel = 1
+
+        return render_template('index.html', moneys=moneys, sum_price=sum_price, incomes=incomes, sum_income=sum_income, button_sel=button_sel, today_year=today_year, today_month=today_month)
+
+#年月変更した時のリスト
+@app.route('/index/<today_year>/<today_month>', methods=['POST', 'GET'])
+@login_required
+def ind(today_year, today_month):
+    if request.method == 'POST':
+        up = request.form['up']
+        today_month = int(today_month)
+        today_year = int(today_year)
+        if up == '1':
+            if today_month==12:
+                today_year += 1
+                today_month = 1
+            else:
+                today_month += 1
+
+        else:
+            if today_month==1:
+                today_year -= 1
+                today_month = 12
+            
+            else:
+                today_month -= 1
+
+        return redirect(url_for('ind', today_year=today_year, today_month=today_month))
+        
+    else:
+        moneys = Money.query.filter(Money.username==current_user.username).filter(Money.year==today_year).filter(Money.month==today_month).filter(Money.use_category!='収入').order_by(desc(Money.use_date)).all()
+        sum_price = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username).filter(Money.year==today_year).filter(Money.month==today_month).filter(Money.use_category!='収入').scalar()
+        incomes = Money.query.filter(Money.username==current_user.username).filter(Money.year==today_year).filter(Money.month==today_month).filter(Money.use_category=='収入').order_by(desc(Money.use_date)).all()
+        sum_income = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username).filter(Money.year==today_year).filter(Money.month==today_month).filter(Money.use_category=='収入').scalar()
+        button_sel = 2
+
+        return render_template('index.html', moneys=moneys, sum_price=sum_price, incomes=incomes, sum_income=sum_income, today_year=today_year, today_month=today_month, button_sel=button_sel)
+
+
+#ログアウト
 @app.route('/logout')
 @login_required
 def logout():
     logout_user()
     return redirect('/login')
 
+#支出リストからの削除
 @app.route('/delete', methods=['POST'])
 @login_required
 def delete():
@@ -103,13 +175,15 @@ def delete():
     db.session.commit()
     return redirect('/index')
 
+
+#リストに新規追加
 @app.route('/new', methods=['POST', 'GET'])
 @login_required
 def new():
     if request.method == 'POST':
         username = current_user.username
         use_date = request.form.get('use_date')
-        use_date = datetime.strptime(use_date, '%Y-%m-%d')
+        use_date = datetime.datetime.strptime(use_date, '%Y-%m-%d')
         use_category = request.form.get('use_category')
         detail_text = request.form.get('detail_text')
         price = request.form.get('price')
@@ -125,56 +199,17 @@ def new():
     else:
         return render_template('new.html')
 
-@app.route('/conditions', methods=['POST', 'GET'])
-@login_required
-def conditions():
-        if request.method == 'POST':
-            year_con = request.form.get('year_conditions')
-            month_con = request.form.get('month_conditions')
-            category_con = request.form.get('category_conditions')
-            if year_con== '' and month_con == '' and category_con == '':
-                moneys = Money.query.filter(Money.username==current_user.username).order_by(desc(Money.use_date)).all()
-                sum_price = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username).scalar()
-
-            elif year_con != '' and month_con =='' and category_con == '':
-                moneys = Money.query.filter(Money.username==current_user.username).filter(Money.year==int(year_con)).order_by(desc(Money.use_date)).all()
-                sum_price = db.session.query(func.sum(Money.price)).filter(Money.year==int(year_con)).filter(Money.username==current_user.username).scalar()         
-
-            elif year_con == '' and month_con != '' and category_con == '':
-                moneys = Money.query.filter(Money.username==current_user.username).filter(Money.month==int(month_con)).order_by(desc(Money.use_date)).all()
-                sum_price = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username).filter(Money.month==int(month_con)).scalar()
-
-            elif year_con == '' and month_con == '' and category_con != '':
-                moneys = Money.query.filter(Money.use_category==category_con).filter(Money.username==current_user.username).order_by(desc(Money.use_date)).all()
-                sum_price = db.session.query(func.sum(Money.price)).filter(Money.use_category==category_con).filter(Money.username==current_user.username).scalar()
-
-            elif year_con != '' and month_con != '' and category_con == '':
-                moneys = Money.query.filter(Money.year==int(year_con)).filter(Money.month==int(month_con)).filter(Money.username==current_user.username).order_by(desc(Money.use_date)).all()
-                sum_price = db.session.query(func.sum(Money.price)).filter(Money.year==int(year_con)).filter(Money.month==int(month_con)).filter(Money.username==current_user.username).scalar()
-            
-            elif year_con != '' and month_con == '' and category_con != '':
-                moneys = Money.query.filter(Money.year==int(year_con)).filter(Money.use_category==category_con).filter(Money.username==current_user.username).order_by(desc(Money.use_date)).all()
-                sum_price = db.session.query(func.sum(Money.price)).filter(Money.year==int(year_con)).filter(Money.use_category==category_con).filter(Money.username==current_user.username).scalar()
-
-            elif year_con == '' and month_con != '' and category_con != '':
-                moneys = Money.query.filter(Money.month==int(month_con)).filter(Money.use_category==category_con).filter(Money.username==current_user.username).order_by(desc(Money.use_date)).all()
-                sum_price = db.session.query(func.sum(Money.price)).filter(Money.month==int(month_con)).filter(Money.use_category==category_con).filter(Money.username==current_user.username).scalar()
-
-            else:
-                moneys = Money.query.filter(Money.username==current_user.username).filter(Money.year==int(year_con)).filter(Money.month==int(month_con)).filter(Money.use_category==category_con).order_by(desc(Money.use_date)).all()
-                sum_price = db.session.query(func.sum(Money.price)).filter(Money.year==int(year_con)).filter(Money.month==int(month_con)).filter(Money.use_category==category_con).filter(Money.username==current_user.username).scalar()         
-            return render_template('index.html', moneys=moneys, sum_price=sum_price)
-
+#支出リストの更新
 @app.route('/update', methods=['POST', 'GET'])
 @login_required
 def update():
     if request.method == 'POST':
+        print(request.referrer)
         id = request.form["id"]
         list = Money.query.filter_by(id=id).one()
-        if list.price < 0:
-            list.price = str(int(list.price)*-1)
 
         return render_template('update.html', list=list)
+
 
 @app.route('/u', methods=['POST', 'GET'])
 @login_required
@@ -183,12 +218,12 @@ def u():
         id = request.form["id"]
         list = Money.query.filter_by(id=id).one()
         list.use_date = request.form["use_date"]
-        list.use_date = datetime.strptime(list.use_date, '%Y-%m-%d')
+        list.use_date = datetime.datetime.strptime(list.use_date, '%Y-%m-%d')
         list.use_category = request.form["use_category"]
         list.detail_text = request.form["detail_text"]
         list.price = request.form["price"]
         list.year = int(list.use_date.year)
-        list.month = int(list.use_date.month)
+        list.month = int(list.use_date.month)          
 
         db.session.commit()
         return redirect('/index')
