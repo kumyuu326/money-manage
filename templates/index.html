@@ -29,17 +29,21 @@
 </div>
 
 {% if button_sel == 1 %}
+<div class="list_change">
 <form action="/index" method="post">
     <button type="submit" name="up" value="2">＜</button>
     <label for="">{{ today_year }}年{{ today_month}}月</label>
     <button type="submit" name="up" value="1">＞</button>
 </form>
+</div>
 {% else %}
+<div class="list_change">
 <form action="/index/{{today_year}}/{{today_month}}" method="post">
     <button type="submit" name="up" value="2">＜</button>
     <label for="">{{ today_year }}年{{ today_month}}月</label>
     <button type="submit" name="up" value="1">＞</button>
 </form>
+</div>
 {% endif %}
 
 <div class="f_conditions">

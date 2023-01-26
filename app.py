@@ -47,6 +47,12 @@ db.create_all()
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+@app.before_request
+def before_request():
+    session.permanent = True
+    app.permanent_session_lifetime = datetime.timedelta(minutes=15)
+    session.modified = True
+
 
 #トップページ
 @app.route('/', methods=['POST', 'GET'])
@@ -77,9 +83,16 @@ def login():
 
         user = User.query.filter_by(username=username).first()
         if check_password_hash(user.password, password):
+            session.permanent = True
             login_user(user)
             return redirect('/a')
     else:
+        if "username" in session:
+            u = session["username"]
+            user = User.query.filter_by(username=u).first()
+            session.permanent = True
+            login_user(user)
+            return redirect(url_for('a'))
         return render_template('login.html')
 
 @app.route('/a', methods=['GET', 'POST'])
@@ -92,8 +105,10 @@ def a():
 @login_required
 def index():
     today = datetime.date.today()
-    today_year = today.year
-    today_month = today.month
+    session["today_year"] = today.year
+    session["today_month"] = today.month
+    today_year = int(session["today_year"])
+    today_month = int(session["today_month"])
 
     if request.method == 'POST':
         up = request.form['up']
@@ -127,10 +142,14 @@ def index():
 @app.route('/index/<today_year>/<today_month>', methods=['POST', 'GET'])
 @login_required
 def ind(today_year, today_month):
+    session["today_year"] = today_year
+    session["today_month"] = today_month
+    today_year = int(session["today_year"])
+    today_month = int(session["today_month"])
+
     if request.method == 'POST':
         up = request.form['up']
-        today_month = int(today_month)
-        today_year = int(today_year)
+
         if up == '1':
             if today_month==12:
                 today_year += 1
@@ -145,7 +164,7 @@ def ind(today_year, today_month):
             
             else:
                 today_month -= 1
-
+        print(today_year, today_month)
         return redirect(url_for('ind', today_year=today_year, today_month=today_month))
         
     else:
@@ -162,8 +181,9 @@ def ind(today_year, today_month):
 @app.route('/logout')
 @login_required
 def logout():
+    session["username"] = current_user.username
     logout_user()
-    return redirect('/login')
+    return redirect('/')
 
 #支出リストからの削除
 @app.route('/delete', methods=['POST'])
@@ -173,7 +193,11 @@ def delete():
     list = Money.query.filter_by(id=id).first()
     db.session.delete(list)
     db.session.commit()
-    return redirect('/index')
+
+    today_year = session["today_year"]
+    today_month = session["today_month"]
+
+    return redirect(url_for('ind', today_year=today_year, today_month=today_month))
 
 
 #リストに新規追加
@@ -194,7 +218,10 @@ def new():
         db.session.add(detail)
         db.session.commit()
 
-        return redirect('/index')
+        today_year = session["today_year"]
+        today_month = session["today_month"]
+
+        return redirect(url_for('ind', today_year=today_year, today_month=today_month))
 
     else:
         return render_template('new.html')
@@ -226,7 +253,11 @@ def u():
         list.month = int(list.use_date.month)          
 
         db.session.commit()
-        return redirect('/index')
+
+        today_year = session["today_year"]
+        today_month = session["today_month"]
+                
+        return redirect(url_for('ind', today_year=today_year, today_month=today_month))
 
 
 if __name__=='__main__':
