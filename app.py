@@ -1,6 +1,7 @@
 from crypt import methods
 import datetime
 import os
+from unicodedata import category
 from flask import Flask, render_template, request, redirect, session, url_for
 from flask_login import UserMixin, LoginManager, current_user, login_required, login_user, logout_user
 from flask_sqlalchemy import SQLAlchemy
@@ -47,11 +48,6 @@ db.create_all()
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-@app.before_request
-def before_request():
-    session.permanent = True
-    app.permanent_session_lifetime = datetime.timedelta(minutes=15)
-    session.modified = True
 
 
 #トップページ
@@ -84,13 +80,13 @@ def login():
         user = User.query.filter_by(username=username).first()
         if check_password_hash(user.password, password):
             session.permanent = True
+            app.permanent_session_lifetime = datetime.timedelta(days=1)
             login_user(user)
             return redirect('/a')
     else:
         if "username" in session:
             u = session["username"]
             user = User.query.filter_by(username=u).first()
-            session.permanent = True
             login_user(user)
             return redirect(url_for('a'))
         return render_template('login.html')
@@ -109,6 +105,8 @@ def index():
     session["today_month"] = today.month
     today_year = int(session["today_year"])
     today_month = int(session["today_month"])
+
+    session["category_col"] = ''
 
     if request.method == 'POST':
         up = request.form['up']
@@ -132,11 +130,16 @@ def index():
     elif request.method == 'GET':
         moneys = Money.query.filter(Money.username==current_user.username).filter(Money.year==today_year).filter(Money.month==today_month).filter(Money.use_category!='収入').order_by(desc(Money.use_date)).all()
         sum_price = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username).filter(Money.year==today_year).filter(Money.month==today_month).filter(Money.use_category!='収入').scalar()
+        if sum_price is None:
+            sum_price = 0
         incomes = Money.query.filter(Money.username==current_user.username).filter(Money.year==today_year).filter(Money.month==today_month).filter(Money.use_category=='収入').order_by(desc(Money.use_date)).all()
         sum_income = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username).filter(Money.year==today_year).filter(Money.month==today_month).filter(Money.use_category=='収入').scalar()
+        if sum_income is None:
+            sum_income = 0
+        profit = sum_income - sum_price
         button_sel = 1
 
-        return render_template('index.html', moneys=moneys, sum_price=sum_price, incomes=incomes, sum_income=sum_income, button_sel=button_sel, today_year=today_year, today_month=today_month)
+        return render_template('index.html', moneys=moneys, sum_price=sum_price, incomes=incomes, sum_income=sum_income, button_sel=button_sel, today_year=today_year, today_month=today_month, profit=profit)
 
 #年月変更した時のリスト
 @app.route('/index/<today_year>/<today_month>', methods=['POST', 'GET'])
@@ -146,6 +149,9 @@ def ind(today_year, today_month):
     session["today_month"] = today_month
     today_year = int(session["today_year"])
     today_month = int(session["today_month"])
+
+    if "category_col" in session:
+        category_col = session["category_col"]
 
     if request.method == 'POST':
         up = request.form['up']
@@ -168,13 +174,30 @@ def ind(today_year, today_month):
         return redirect(url_for('ind', today_year=today_year, today_month=today_month))
         
     else:
-        moneys = Money.query.filter(Money.username==current_user.username).filter(Money.year==today_year).filter(Money.month==today_month).filter(Money.use_category!='収入').order_by(desc(Money.use_date)).all()
-        sum_price = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username).filter(Money.year==today_year).filter(Money.month==today_month).filter(Money.use_category!='収入').scalar()
-        incomes = Money.query.filter(Money.username==current_user.username).filter(Money.year==today_year).filter(Money.month==today_month).filter(Money.use_category=='収入').order_by(desc(Money.use_date)).all()
-        sum_income = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username).filter(Money.year==today_year).filter(Money.month==today_month).filter(Money.use_category=='収入').scalar()
-        button_sel = 2
+        if category_col == '':
+            moneys = Money.query.filter(Money.username==current_user.username).filter(Money.year==today_year).filter(Money.month==today_month).filter(Money.use_category!='収入').order_by(desc(Money.use_date)).all()
+            sum_price = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username).filter(Money.year==today_year).filter(Money.month==today_month).filter(Money.use_category!='収入').scalar()
+            if sum_price is None:
+                sum_price = 0
+            incomes = Money.query.filter(Money.username==current_user.username).filter(Money.year==today_year).filter(Money.month==today_month).filter(Money.use_category=='収入').order_by(desc(Money.use_date)).all()
+            sum_income = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username).filter(Money.year==today_year).filter(Money.month==today_month).filter(Money.use_category=='収入').scalar()
+            if sum_income is None:
+                sum_income = 0
+            profit = sum_income - sum_price
+            button_sel = 2
+        else:
+            moneys = Money.query.filter(Money.username==current_user.username).filter(Money.year==today_year).filter(Money.month==today_month).filter(Money.use_category!='収入').filter(Money.use_category==category_col).order_by(desc(Money.use_date)).all()
+            sum_price = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username).filter(Money.year==today_year).filter(Money.month==today_month).filter(Money.use_category!='収入').filter(Money.use_category==category_col).scalar()
+            if sum_price is None:
+                sum_price = 0
+            incomes = Money.query.filter(Money.username==current_user.username).filter(Money.year==today_year).filter(Money.month==today_month).filter(Money.use_category=='収入').order_by(desc(Money.use_date)).all()
+            sum_income = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username).filter(Money.year==today_year).filter(Money.month==today_month).filter(Money.use_category=='収入').scalar()
+            if sum_income is None:
+                sum_income = 0
+            profit = sum_income - sum_price
+            button_sel = 2
 
-        return render_template('index.html', moneys=moneys, sum_price=sum_price, incomes=incomes, sum_income=sum_income, today_year=today_year, today_month=today_month, button_sel=button_sel)
+        return render_template('index.html', moneys=moneys, sum_price=sum_price, incomes=incomes, sum_income=sum_income, today_year=today_year, today_month=today_month, button_sel=button_sel, profit=profit)
 
 
 #ログアウト
@@ -257,6 +280,17 @@ def u():
         today_year = session["today_year"]
         today_month = session["today_month"]
                 
+        return redirect(url_for('ind', today_year=today_year, today_month=today_month))
+
+@app.route('/conditions', methods=['POST', 'GET'])
+@login_required
+def conditions():
+    if request.method == 'POST':
+        session["category_col"] = request.form.get('category_conditions')
+
+        today_year = session["today_year"]
+        today_month = session["today_month"]
+
         return redirect(url_for('ind', today_year=today_year, today_month=today_month))
 
 

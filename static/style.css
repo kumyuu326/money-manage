@@ -247,6 +247,12 @@ input.btn{
     right: 30px;
 }
 
+.profit h2{
+    position: absolute;
+    right: 70px;
+    bottom: 200px;
+}
+
 .add_button button{
     background: transparent;
     width: 50px;
