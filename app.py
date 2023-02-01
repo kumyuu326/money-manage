@@ -1,7 +1,6 @@
 from crypt import methods
 import datetime
 import os
-from unicodedata import category
 from flask import Flask, render_template, request, redirect, session, url_for
 from flask_login import UserMixin, LoginManager, current_user, login_required, login_user, logout_user
 from flask_sqlalchemy import SQLAlchemy
@@ -254,7 +253,6 @@ def new():
 @login_required
 def update():
     if request.method == 'POST':
-        print(request.referrer)
         id = request.form["id"]
         list = Money.query.filter_by(id=id).one()
 

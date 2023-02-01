@@ -18,16 +18,8 @@
     </nav>
 </header>
 
-<div align="right" class="add_button">
-    <form action="/new" method="get">
-        <button type="submit">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-              </svg>              
-        </button>
-    </form>
-</div>
 
+<div class="form">
 {% if button_sel == 1 %}
 <div class="list_change">
 <form action="/index" method="post">
@@ -60,10 +52,8 @@
         <input type="submit" value="検索" class="btn"> 
     </form>
 </div>
-
-<div class="profit">
-    <h2>{{ today_month }}月の収益は{{ profit }}円です</h2>
 </div>
+
 
 <div class="tab_wrap">
     <input type="radio" name="tab_btn" id="tab1" checked>
@@ -75,7 +65,7 @@
 </div>
 
 <div class="panel_area">
-<div class="moneylist" id="panel1" style="height: 488px;overflow: scroll;width: 900px;">
+<div class="moneylist" id="panel1" style="height: 488px;overflow: scroll;width: 100%;">
 <table>
     <thead class="list_head">
         <tr>
@@ -131,7 +121,7 @@
 </table>
 </div>
 
-<div class="moneylist" id="panel2" style="height: 488px;overflow: scroll;width: 900px;">
+<div class="moneylist" id="panel2" style="height: 488px;overflow: scroll;width: 100%;">
     <table>
         <thead class="list_head">
             <tr>
@@ -189,6 +179,20 @@
 </div>
 </div>
 
+<div class="add_button">
+    <form action="/new" method="get">
+        <button type="submit">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>              
+        </button>
+    </form>
+</div>
+
+<div class="profit">
+    <h2>{{ today_month }}月の収益は</h2>
+    <h3>{{ profit }}円です</h3>
+</div>
 
 
 {% endblock content %}
