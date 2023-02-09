@@ -2,6 +2,42 @@
 
 {% block header %}
 <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1"></script>
+<script>
+    window.onload = function () {
+    let context = document.querySelector("#japanese_people_chart").getContext('2d')
+    new Chart(context, {
+      type: 'bar',
+      data: {
+          labels: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+          datasets: [{
+              label: "食費",
+              data: ["{{ graph_food_1 }}", "{{ graph_food_2 }}", "{{ graph_food_3 }}", "{{ graph_food_4 }}", "{{ graph_food_5 }}", "{{ graph_food_6 }}", "{{ graph_food_7 }}", "{{ graph_food_8 }}", "{{ graph_food_9 }}", "{{ graph_food_10 }}", "{{ graph_food_11 }}", "{{ graph_food_12 }}"],
+              backgroundColor: ['#4169e1']
+          },{
+              label: "日用品",
+              data: ["{{ graph_daily_1 }}", "{{ graph_daily_2 }}", "{{ graph_daily_3 }}", "{{ graph_daily_4 }}", "{{ graph_daily_5 }}", "{{ graph_daily_6 }}", "{{ graph_daily_7 }}", "{{ graph_daily_8 }}", "{{ graph_daily_9 }}", "{{ graph_daily_10 }}", "{{ graph_daily_11 }}", "{{ graph_daily_12 }}"],
+              backgroundColor: ['#ffa500']
+          },{
+              label: "その他",
+              data: ["{{ graph_other_1 }}", "{{ graph_other_2 }}", "{{ graph_other_3 }}", "{{ graph_other_4 }}", "{{ graph_other_5 }}", "{{ graph_other_6 }}", "{{ graph_other_7 }}", "{{ graph_other_8 }}", "{{ graph_other_9 }}", "{{ graph_other_10 }}", "{{ graph_other_11 }}", "{{ graph_other_12 }}"],
+              backgroundColor: ['#fa8072']
+          }],
+      },  
+      options: {
+        scales: {
+            x: {
+                stacked: true,
+            },
+            y: {
+                stacked: true
+            }
+        },
+        responsive: false
+      }
+    })
+  }
+</script>
 {% endblock header %}
 
 {% block content %}
@@ -10,11 +46,13 @@
 
     <nav class="header01-nav">
         <ul class="header01-list">
-            <li class="header01-item"><a href="/a">統計</a></li>
+            <li class="header01-item"><a href="/graph">グラフ</a></li>
             <li class="header01-item"><a href="/index">リスト</a></li>
-            <li class="header01-item"><a href="">グラフ</a></li>
+            <li class="header01-item"><a href="">統計</a></li>
             <li class="header01-item header01-item--contact"><a href="/logout" role="button">ログアウト</a></li>
         </ul>
     </nav>
 </header>
+
+<canvas id="japanese_people_chart" width="700" height="500"></canvas>
 {% endblock content %}

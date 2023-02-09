@@ -10,9 +10,9 @@
 
     <nav class="header01-nav">
         <ul class="header01-list">
-            <li class="header01-item"><a href="/a">統計</a></li>
+            <li class="header01-item"><a href="/graph">グラフ</a></li>
             <li class="header01-item"><a href="/index">リスト</a></li>
-            <li class="header01-item"><a href="">グラフ</a></li>
+            <li class="header01-item"><a href="">統計</a></li>
             <li class="header01-item header01-item--contact"><a href="/logout" role="button">ログアウト</a></li>
         </ul>
     </nav>
@@ -105,6 +105,21 @@
             </td>
         </tr>
     {% endfor %}
+    
+    {% if blank_moneys >= 1 %}
+    {% for blank_money in range(blank_moneys) %}
+        <tr style="height: 39px;">
+            <td class="date_col"></td>
+            <td class="category_col" align="center"></td>
+            <td class="detail_col"></td>
+            <td class="price_col" align="right"></td>
+            <td class="delete_button" style="padding: 4px; padding-left: 12px;">
+            </td>
+            <td class="update_button">
+            </td>
+        </tr>
+    {% endfor %}
+    {% endif %}
     </tbody>
 
     <tfoot class="list_foot">
@@ -161,6 +176,21 @@
                 </td>
             </tr>
         {% endfor %}
+
+        {% if blank_incomes >= 1 %}
+        {% for blank_income in range(blank_incomes) %}
+            <tr style="height: 39px;">
+                <td class="date_col"></td>
+                <td class="category_col" align="center"></td>
+                <td class="detail_col"></td>
+                <td class="price_col" align="right"></td>
+                <td class="delete_button" style="padding: 4px; padding-left: 12px;">
+                </td>
+                <td class="update_button">
+                </td>
+            </tr>
+        {% endfor %}
+        {% endif %}
         </tbody>
     
         <tfoot class="list_foot">
