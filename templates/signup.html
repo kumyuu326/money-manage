@@ -5,13 +5,26 @@
 {% endblock header %}
 
 {% block content %}
-<h1>新規登録</h1>
-<form method="post">
-    <label for="">ユーザ名：</label>
-    <input type="text" name = "username">
-    <label for="">パスワード：</label>
-    <input type="text" name = "password">
-    <input type="submit" value="新規登録">
-</form><br>
-<a href="http://127.0.0.1:5000">Topに戻る</a>
+<header class="header01">
+    <h1 class="header01-logo">LOGO</h1>
+
+    <nav class="header01-nav">
+        <ul class="header01-list">
+            <li class="header01-item"><a href="/signup">新規登録</a></li>
+            <li class="header01-item"><a href="/login">ログイン</a></li>
+        </ul>
+    </nav>
+</header>
+
+<div class="login">
+    <div class="login-triangle"></div>
+    
+    <h2 class="login-header">Sign up</h2>
+  
+    <form method="post" class="login-container">
+      <p><input type="text" placeholder="Username" name="username"></p>
+      <p><input type="text" placeholder="Password" name="password"></p>
+      <p><input type="submit" value="Sign up"></p>
+    </form>
+  </div>
 {% endblock content %}

@@ -5,8 +5,8 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1"></script>
 <script>
     window.onload = function () {
-    let context = document.querySelector("#japanese_people_chart").getContext('2d')
-    new Chart(context, {
+    let ctx1 = document.querySelector("#japanese_people_chart").getContext('2d')
+    new Chart(ctx1, {
       type: 'bar',
       data: {
           labels: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
@@ -36,7 +36,21 @@
         responsive: false
       }
     })
-  }
+
+      let ctx2 = document.querySelector("#sushi_circle").getContext('2d')
+      new Chart(ctx2, {
+        type: 'doughnut',
+        data: {
+          labels: ["食費", "日用品", "その他"],
+          datasets: [{
+            data: [60, 20, 15]
+          }]
+        },
+        options: {
+          responsive: false,
+        }
+      });
+    }
 </script>
 {% endblock header %}
 
@@ -48,11 +62,28 @@
         <ul class="header01-list">
             <li class="header01-item"><a href="/graph">グラフ</a></li>
             <li class="header01-item"><a href="/index">リスト</a></li>
-            <li class="header01-item"><a href="">統計</a></li>
-            <li class="header01-item header01-item--contact"><a href="/logout" role="button">ログアウト</a></li>
+            <li class="header01-item header01-item--contact"><a href="/logout" role="button" onclick="return confirm('本当にログアウトしてもよろしいですか？')">ログアウト</a></li>
         </ul>
     </nav>
 </header>
 
+{% if button_sel == 1 %}
+<div class="list_change">
+    <form action="/graph" method="post">
+        <button type="submit" name="up" value="2">＜</button>
+            <label for="">{{ today_year }}年</label>
+        <button type="submit" name="up" value="1">＞</button>
+    </form>
+</div>
+{% else %}
+<div class="list_change">
+    <form action="/graph/{{today_year}}" method="post">
+        <button type="submit" name="up" value="2">＜</button>
+            <label for="">{{ today_year }}年</label>
+        <button type="submit" name="up" value="1">＞</button>
+    </form>
+</div>
+{% endif %}
 <canvas id="japanese_people_chart" width="700" height="500"></canvas>
+<canvas id="sushi_circle" width="400" height="400"></canvas>
 {% endblock content %}

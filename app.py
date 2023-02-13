@@ -86,15 +86,26 @@ def login():
             u = session["username"]
             user = User.query.filter_by(username=u).first()
             login_user(user)
-            return redirect(url_for('graph'))
+            return redirect(url_for('graph_now'))
         return render_template('login.html')
 
 @app.route('/graph', methods=['POST', 'GET'])
 @login_required
-def graph():
+def graph_now():
     today = datetime.date.today()
     session["today_year"] = today.year
     today_year = int(session["today_year"])
+    button_sel = 1
+
+    if request.method == 'POST':
+        up = request.form['up']
+        if up == '1':
+            today_year += 1
+
+        else:
+            today_year -= 1
+
+        return redirect(url_for('graph', today_year=today_year))
     
     graph_food_1 = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username, Money.use_category=='食費', Money.year==today_year, Money.month==1).scalar()
     graph_daily_1 = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username, Money.use_category=='日用品', Money.year==today_year, Money.month==1).scalar()
@@ -148,7 +159,79 @@ def graph():
                                 graph_other_3=graph_other_3, graph_food_4=graph_food_4, graph_daily_4=graph_daily_4, graph_other_4=graph_other_4, graph_food_5=graph_food_5, graph_daily_5=graph_daily_5, graph_other_5=graph_other_5, graph_food_6=graph_food_6,
                                     graph_daily_6=graph_daily_6, graph_other_6=graph_other_6, graph_food_7=graph_food_7, graph_daily_7=graph_daily_7, graph_other_7=graph_other_7, graph_food_8=graph_food_8, graph_daily_8=graph_daily_8, graph_other_8=graph_other_8,
                                         graph_food_9=graph_food_9, graph_daily_9=graph_daily_9, graph_other_9=graph_other_9, graph_food_10=graph_food_10, graph_daily_10=graph_daily_10, graph_other_10=graph_other_10, graph_food_11=graph_food_11, graph_daily_11=graph_daily_11, 
-                                            graph_other_11=graph_other_11, graph_food_12=graph_food_12, graph_daily_12=graph_daily_12, graph_other_12=graph_other_12)
+                                            graph_other_11=graph_other_11, graph_food_12=graph_food_12, graph_daily_12=graph_daily_12, graph_other_12=graph_other_12, button_sel=button_sel, today_year=today_year)
+
+@app.route('/graph/<today_year>', methods=['POST', 'GET'])
+@login_required
+def graph(today_year):
+    session["today_year"] = today_year
+    today_year = int(session["today_year"])
+    button_sel = 2
+
+    if request.method == 'POST':
+        up = request.form['up']
+        if up == '1':
+            today_year += 1
+
+        else:
+            today_year -= 1
+
+        return redirect(url_for('graph', today_year=today_year))
+    
+    graph_food_1 = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username, Money.use_category=='食費', Money.year==today_year, Money.month==1).scalar()
+    graph_daily_1 = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username, Money.use_category=='日用品', Money.year==today_year, Money.month==1).scalar()
+    graph_other_1 = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username, Money.use_category=='その他', Money.year==today_year, Money.month==1).scalar()
+
+    graph_food_2 = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username, Money.use_category=='食費', Money.year==today_year, Money.month==2).scalar()
+    graph_daily_2 = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username, Money.use_category=='日用品', Money.year==today_year, Money.month==2).scalar()
+    graph_other_2 = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username, Money.use_category=='その他', Money.year==today_year, Money.month==2).scalar()
+
+    graph_food_3 = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username, Money.use_category=='食費', Money.year==today_year, Money.month==3).scalar()
+    graph_daily_3 = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username, Money.use_category=='日用品', Money.year==today_year, Money.month==3).scalar()
+    graph_other_3 = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username, Money.use_category=='その他', Money.year==today_year, Money.month==3).scalar()
+
+    graph_food_4 = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username, Money.use_category=='食費', Money.year==today_year, Money.month==4).scalar()
+    graph_daily_4 = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username, Money.use_category=='日用品', Money.year==today_year, Money.month==4).scalar()
+    graph_other_4 = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username, Money.use_category=='その他', Money.year==today_year, Money.month==4).scalar()
+
+    graph_food_5 = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username, Money.use_category=='食費', Money.year==today_year, Money.month==5).scalar()
+    graph_daily_5 = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username, Money.use_category=='日用品', Money.year==today_year, Money.month==5).scalar()
+    graph_other_5 = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username, Money.use_category=='その他', Money.year==today_year, Money.month==5).scalar()
+
+    graph_food_6 = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username, Money.use_category=='食費', Money.year==today_year, Money.month==6).scalar()
+    graph_daily_6 = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username, Money.use_category=='日用品', Money.year==today_year, Money.month==6).scalar()
+    graph_other_6 = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username, Money.use_category=='その他', Money.year==today_year, Money.month==6).scalar()
+
+    graph_food_7 = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username, Money.use_category=='食費', Money.year==today_year, Money.month==7).scalar()
+    graph_daily_7 = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username, Money.use_category=='日用品', Money.year==today_year, Money.month==7).scalar()
+    graph_other_7 = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username, Money.use_category=='その他', Money.year==today_year, Money.month==7).scalar()
+
+    graph_food_8 = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username, Money.use_category=='食費', Money.year==today_year, Money.month==8).scalar()
+    graph_daily_8 = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username, Money.use_category=='日用品', Money.year==today_year, Money.month==8).scalar()
+    graph_other_8 = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username, Money.use_category=='その他', Money.year==today_year, Money.month==8).scalar()
+
+    graph_food_9 = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username, Money.use_category=='食費', Money.year==today_year, Money.month==9).scalar()
+    graph_daily_9 = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username, Money.use_category=='日用品', Money.year==today_year, Money.month==9).scalar()
+    graph_other_9 = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username, Money.use_category=='その他', Money.year==today_year, Money.month==9).scalar()
+
+    graph_food_10 = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username, Money.use_category=='食費', Money.year==today_year, Money.month==10).scalar()
+    graph_daily_10 = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username, Money.use_category=='日用品', Money.year==today_year, Money.month==10).scalar()
+    graph_other_10 = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username, Money.use_category=='その他', Money.year==today_year, Money.month==10).scalar()
+
+    graph_food_11 = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username, Money.use_category=='食費', Money.year==today_year, Money.month==11).scalar()
+    graph_daily_11 = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username, Money.use_category=='日用品', Money.year==today_year, Money.month==11).scalar()
+    graph_other_11 = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username, Money.use_category=='その他', Money.year==today_year, Money.month==11).scalar()
+
+    graph_food_12 = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username, Money.use_category=='食費', Money.year==today_year, Money.month==12).scalar()
+    graph_daily_12 = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username, Money.use_category=='日用品', Money.year==today_year, Money.month==12).scalar()
+    graph_other_12 = db.session.query(func.sum(Money.price)).filter(Money.username==current_user.username, Money.use_category=='その他', Money.year==today_year, Money.month==12).scalar()
+
+    return render_template('a.html', graph_food_1=graph_food_1, graph_daily_1=graph_daily_1, graph_other_1=graph_other_1, graph_food_2=graph_food_2, graph_daily_2=graph_daily_2, graph_other_2=graph_other_2, graph_food_3=graph_food_3, graph_daily_3=graph_daily_3, 
+                                graph_other_3=graph_other_3, graph_food_4=graph_food_4, graph_daily_4=graph_daily_4, graph_other_4=graph_other_4, graph_food_5=graph_food_5, graph_daily_5=graph_daily_5, graph_other_5=graph_other_5, graph_food_6=graph_food_6,
+                                    graph_daily_6=graph_daily_6, graph_other_6=graph_other_6, graph_food_7=graph_food_7, graph_daily_7=graph_daily_7, graph_other_7=graph_other_7, graph_food_8=graph_food_8, graph_daily_8=graph_daily_8, graph_other_8=graph_other_8,
+                                        graph_food_9=graph_food_9, graph_daily_9=graph_daily_9, graph_other_9=graph_other_9, graph_food_10=graph_food_10, graph_daily_10=graph_daily_10, graph_other_10=graph_other_10, graph_food_11=graph_food_11, graph_daily_11=graph_daily_11, 
+                                            graph_other_11=graph_other_11, graph_food_12=graph_food_12, graph_daily_12=graph_daily_12, graph_other_12=graph_other_12, button_sel=button_sel, today_year=today_year)
+
 
 #現在の年月のリスト
 @app.route('/index', methods=['GET', 'POST'])
