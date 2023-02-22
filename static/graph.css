@@ -1,0 +1,44 @@
+@charset "utf-8";
+
+/* グラフ */
+.graph{
+    display: flex;
+    align-items: center;
+    gap: 190px;
+    margin-top: 40px;
+    margin-left: 50px;
+}
+
+.graph1 canvas{
+    padding: 15px 20px;
+}
+
+.box{
+    padding: 0.5em 1em;
+    color: #5d627b;
+    background: white;
+    border-top: solid 5px #5d627b;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.22);
+}
+
+.box_tl{
+    margin-left: 20px;
+}
+
+.box_table{
+    border-collapse: collapse;
+}
+
+.box_table th, .box_table td{
+    border-bottom: 1px solid #5d627b;
+}
+.box_body{
+    text-align: right;
+    padding-left: 70px;
+    padding-right: 10px;
+    padding-bottom: 25px;
+    padding-top: 25px;
+}
+.box_item{
+    padding: 25px 15px;
+}

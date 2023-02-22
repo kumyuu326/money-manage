@@ -1,55 +1,90 @@
 {% extends 'base.html' %}
 
 {% block header %}
+<link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='form.css')}}">
 {% endblock header %}
 
 {% block content %}
-<div class="form_listadd" style="width: 300px;">
-    <form action='/u' method="post" class="update_list">
-        <input type="date" name="use_date" value="{{ list.use_date }}"><br>
-        <select name="use_category">
-            {% if list.use_category == '食費' %}
-            <option value="食費">食費</option>
-            <option value="">ー</option>
-            <option value="収入">収入</option>
-            <option value="日用品">日用品</option>
-            <option value="その他">その他</option>
+<div class="listadd">
+    <h1 class="listadd_tl">出費/収入の更新</h1>
+    <form action='/u' method="post" class="listadd_form">
+        <table class="listadd_table">
+            <tr>
+                <th class="listadd_item">日付</th>
+                <td class="listadd_body">
+                    <input type="date" name="use_date" value="{{ list.use_date }}" class="listadd_select">
+                </td>
+            </tr>
+            <tr>
+                <th class="listadd_item">カテゴリー</th>
+                <td class="listadd_body">
+                    <select name="use_category" class="listadd_select">
+                        {% if list.use_category == '食費' %}
+                        <option value="食費">食費</option>
+                        <option value="">ー</option>
+                        <option value="日用品">日用品</option>
+                        <option value="交通費">交通費</option>
+                        <option value="その他">その他</option>
+                        <option value="収入">収入</option>
+            
+                        {% elif list.use_category == '収入' %}
+                        <option value="収入">収入</option>
+                        <option value="">ー</option>
+                        <option value="食費">食費</option>
+                        <option value="日用品">日用品</option>
+                        <option value="交通費">交通費</option>
+                        <option value="その他">その他</option>
+            
+                        {% elif list.use_category == '日用品' %}
+                        <option value="日用品">日用品</option>
+                        <option value="">ー</option>
+                        <option value="食費">食費</option>
+                        <option value="交通費">交通費</option>
+                        <option value="その他">その他</option>
+                        <option value="収入">収入</option>
+            
+                        {% elif list.use_category == 'その他' %}
+                        <option value="その他">その他</option>
+                        <option value="">ー</option>
+                        <option value="食費">食費</option>
+                        <option value="日用品">日用品</option>
+                        <option value="交通費">交通費</option>
+                        <option value="収入">収入</option>
 
-            {% elif list.use_category == '収入' %}
-            <option value="収入">収入</option>
-            <option value="">ー</option>
-            <option value="食費">食費</option>
-            <option value="日用品">日用品</option>
-            <option value="その他">その他</option>
-
-            {% elif list.use_category == '日用品' %}
-            <option value="日用品">日用品</option>
-            <option value="">ー</option>
-            <option value="食費">食費</option>
-            <option value="収入">収入</option>
-            <option value="その他">その他</option>
-
-            {% elif list.use_category == 'その他' %}
-            <option value="その他">その他</option>
-            <option value="">ー</option>
-            <option value="食費">食費</option>
-            <option value="収入">収入</option>
-            <option value="日用品">日用品</option>
-
-            {% else %}
-            <option value="">ー</option>
-            <option value="食費">食費</option>
-            <option value="収入">収入</option>
-            <option value="日用品">日用品</option>
-            <option value="その他">その他</option>
-            {% endif %}
-        </select><br>
-    
-        <label for="">メモ</label>
-        <input type="text" name="detail_text" value="{{ list.detail_text }}"><br>
-        <label for="">金額</label>
-        <input type="number" name="price" required min="0" value="{{ list.price }}">
-        <button type="submit" value="{{ list.id }}" name="id">更新</button>
+                        {% elif list.use_category == '交通費' %}
+                        <option value="交通費">交通費</option>
+                        <option value="">ー</option>
+                        <option value="食費">食費</option>
+                        <option value="日用品">日用品</option>
+                        <option value="その他">その他</option>
+                        <option value="収入">収入</option>
+            
+                        {% else %}
+                        <option value="">ー</option>
+                        <option value="食費">食費</option>
+                        <option value="日用品">日用品</option>
+                        <option value="交通費">交通費</option>
+                        <option value="その他">その他</option>
+                        <option value="収入">収入</option>
+                        {% endif %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th class="listadd_item">価格</th>
+                <td class="listadd_body">
+                    <input type="number" name="price" required min="0" value="{{ list.price }}" class="listadd_text">
+                </td>
+            </tr>
+            <tr>
+                <th class="listadd_item">メモ</th>
+                <td class="listadd_body">
+                    <input type="text" name="detail_text" value="{{ list.detail_text }}" class="listadd_textarea">
+                </td>
+            </tr>
+        </table>
+        <button type="submit" value="{{ list.id }}" name="id" class="listadd_submit">更新</button>
     </form>
 </div>
 {% endblock content %}

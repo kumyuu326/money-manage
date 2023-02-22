@@ -1,26 +1,49 @@
 {% extends 'base.html' %}
 {% block header %}
+<link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='form.css')}}">
 {% endblock header %}
 
 {% block content %}
 
-<div class="form_listadd" style="width: 300px;">
-    <form action='/new' method="post" class="add_list">
-        <input type="date" name="use_date"><br>
-        <select name="use_category">
-            <option value="">ー</option>
-            <option value="食費">食費</option>
-            <option value="収入">収入</option>
-            <option value="日用品">日用品</option>
-            <option value="その他">その他</option>
-        </select><br>
-    
-        <label for="">メモ</label>
-        <input type="text" name="detail_text"><br>
-        <label for="">金額</label>
-        <input type="number" name="price" required min="0">
-        <input type="submit" value="追加">
-    </form>
-    </div>
+<div class="listadd">
+    <h1 class="listadd_tl">出費/収入登録</h1>
+        <form action='/new' method="post">
+        <table class="listadd_table">
+            <tr>
+                <th class="listadd_item">日付</th>
+                <td class="listadd_body">
+                    <input type="date" name="use_date" class="listadd_select">
+                </td>
+            </tr>
+            <tr>
+                <th class="listadd_item">カテゴリー</th>
+                <td class="listadd_body">
+                    <select name="use_category" class="listadd_select">
+                        <option value="">ー</option>
+                        <option value="食費">食費</option>
+                        <option value="日用品">日用品</option>
+                        <option value="交通費">交通費</option>
+                        <option value="その他">その他</option>
+                        <option value="収入">収入</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th class="listadd_item">価格</th>
+                <td class="listadd_body">
+                    <input type="number" name="price" required min="0" class="listadd_text">
+                </td>
+            </tr>
+            <tr>
+                <th class="listadd_item">メモ</th>
+                <td class="listadd_body">
+                    <input type="text" name="detail_text" class="listadd_textarea">
+                </td>
+            </tr>         
+        </table>
+        <input type="submit" value="追加" class="listadd_submit">
+        </form>
+</div>
 
 {% endblock content %}

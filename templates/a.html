@@ -2,7 +2,9 @@
 
 {% block header %}
 <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='graph.css')}}">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 <script>
     window.onload = function () {
     let ctx1 = document.querySelector("#japanese_people_chart").getContext('2d')
@@ -13,43 +15,73 @@
           datasets: [{
               label: "食費",
               data: ["{{ graph_food_1 }}", "{{ graph_food_2 }}", "{{ graph_food_3 }}", "{{ graph_food_4 }}", "{{ graph_food_5 }}", "{{ graph_food_6 }}", "{{ graph_food_7 }}", "{{ graph_food_8 }}", "{{ graph_food_9 }}", "{{ graph_food_10 }}", "{{ graph_food_11 }}", "{{ graph_food_12 }}"],
-              backgroundColor: ['#4169e1']
+              backgroundColor: ['rgba(65, 105, 225, 0.4)'],
+              borderColor: ['rgba(65, 105, 225, 1)'],
+              borderWidth: 1
           },{
               label: "日用品",
               data: ["{{ graph_daily_1 }}", "{{ graph_daily_2 }}", "{{ graph_daily_3 }}", "{{ graph_daily_4 }}", "{{ graph_daily_5 }}", "{{ graph_daily_6 }}", "{{ graph_daily_7 }}", "{{ graph_daily_8 }}", "{{ graph_daily_9 }}", "{{ graph_daily_10 }}", "{{ graph_daily_11 }}", "{{ graph_daily_12 }}"],
-              backgroundColor: ['#ffa500']
+              backgroundColor: ['rgba(255, 165, 0, 0.4)'],
+              borderColor: ['rgba(255, 165, 0, 1)'],
+              borderWidth: 1
+          },{
+              label: "交通費",
+              data: ["{{ graph_tpt_1 }}", "{{ graph_tpt_2 }}", "{{ graph_tpt_3 }}", "{{ graph_tpt_4 }}", "{{ graph_tpt_5 }}", "{{ graph_tpt_6 }}", "{{ graph_tpt_7 }}", "{{ graph_tpt_8 }}", "{{ graph_tpt_9 }}", "{{ graph_tpt_10 }}", "{{ graph_tpt_11 }}", "{{ graph_tpt_12 }}"],
+              backgroundColor: ['rgba(250, 128, 114, 0.4)'],
+              borderColor: ['rgba(250, 128, 114, 1)'],
+              borderWidth: 1
           },{
               label: "その他",
               data: ["{{ graph_other_1 }}", "{{ graph_other_2 }}", "{{ graph_other_3 }}", "{{ graph_other_4 }}", "{{ graph_other_5 }}", "{{ graph_other_6 }}", "{{ graph_other_7 }}", "{{ graph_other_8 }}", "{{ graph_other_9 }}", "{{ graph_other_10 }}", "{{ graph_other_11 }}", "{{ graph_other_12 }}"],
-              backgroundColor: ['#fa8072']
+              backgroundColor: ['rgba(128, 128, 128, 0.4)'],
+              borderColor: ['rgba(128, 128, 128, 1)'],
+              borderWidth: 1
+          },{
+              label: "食費",
+              type: "line",
+              fill: false,
+              lineTension: 0,
+              data: ["{{ gf_1 }}", "{{ gf_2 }}", "{{ gf_3 }}", "{{ gf_4 }}", "{{ gf_5 }}", "{{ gf_6 }}", "{{ gf_7 }}", "{{ gf_8 }}", "{{ gf_9 }}", "{{ gf_10 }}", "{{ gf_11 }}", "{{ gf_12 }}"],
+              borderColor: ['rgb(65, 105, 225)'],
+              backgroundColor: ['rgb(255, 255, 100)'],
+              pointBackgroundColor: ['rgb(255, 255, 100)']
+          },{
+              label: "日用品",
+              type: "line",
+              fill: false,
+              lineTension: 0,
+              data: ["{{ gd_1 }}", "{{ gd_2 }}", "{{ gd_3 }}", "{{ gd_4 }}", "{{ gd_5 }}", "{{ gd_6 }}", "{{ gd_7 }}", "{{ gd_8 }}", "{{ gd_9 }}", "{{ gd_10 }}", "{{ gd_11 }}", "{{ gd_12 }}"],
+              borderColor: ['rgb(255, 165, 0)'],
+              backgroundColor: ['rgb(110, 255, 0)'],
+              pointBackgroundColor: ['rgb(110, 255, 0)']
+          },{
+              label: "交通費",
+              type: "line",
+              fill: false,
+              data: ["{{ gt_1 }}", "{{ gt_2 }}", "{{ gt_3 }}", "{{ gt_4 }}", "{{ gt_5 }}", "{{ gt_6 }}", "{{ gt_7 }}", "{{ gt_8 }}", "{{ gt_9 }}", "{{ gt_10 }}", "{{ gt_11 }}", "{{ gt_12 }}"],
+              borderColor: ['rgb(250, 128, 114)'],
+              backgroundColor: ['rgb(0, 255, 255)'],
+              pointBackgroundColor: ['rgb(0, 255, 255)']
           }],
       },  
       options: {
         scales: {
-            x: {
-                stacked: true,
-            },
-            y: {
+            xAxes: {
                 stacked: true
+            },
+            yAxes: {
+                stacked: true
+            }
+        },
+        plugins: {
+            title: {
+                display: true,
+                text: '月別の集計'
             }
         },
         responsive: false
       }
-    })
-
-      let ctx2 = document.querySelector("#sushi_circle").getContext('2d')
-      new Chart(ctx2, {
-        type: 'doughnut',
-        data: {
-          labels: ["食費", "日用品", "その他"],
-          datasets: [{
-            data: [60, 20, 15]
-          }]
-        },
-        options: {
-          responsive: false,
-        }
-      });
+    });
     }
 </script>
 {% endblock header %}
@@ -71,7 +103,7 @@
 <div class="list_change">
     <form action="/graph" method="post">
         <button type="submit" name="up" value="2">＜</button>
-            <label for="">{{ today_year }}年</label>
+            <label for="" class="list_change_l">{{ today_year }}年</label>
         <button type="submit" name="up" value="1">＞</button>
     </form>
 </div>
@@ -79,11 +111,39 @@
 <div class="list_change">
     <form action="/graph/{{today_year}}" method="post">
         <button type="submit" name="up" value="2">＜</button>
-            <label for="">{{ today_year }}年</label>
+            <label for="" class="list_change_l">{{ today_year }}年</label>
         <button type="submit" name="up" value="1">＞</button>
     </form>
 </div>
 {% endif %}
-<canvas id="japanese_people_chart" width="700" height="500"></canvas>
-<canvas id="sushi_circle" width="400" height="400"></canvas>
+<div class="graph">
+<div class="graph1" style="height: 500px; background-color: white;">
+    <canvas id="japanese_people_chart" width="700" height="500" style="background-color: white;"></canvas>
+</div>
+<div class="box">
+    <p class="box_tl"><big>出費</big></p>
+    <table class="box_table" style="width: 300px;">
+        <tr>
+            <th class="box_item">食費</th>
+            <td class="box_body">{{ graph2_food }}円</td>
+        </tr>
+        <tr>
+            <th class="box_item">日用品</th>
+            <td class="box_body">{{ graph2_daily }}円</td>
+        </tr>
+        <tr>
+            <th class="box_item">交通費</th>
+            <td class="box_body">{{ graph2_tpt }}円</td>
+        </tr>
+        <tr>
+            <th class="box_item">その他</th>
+            <td class="box_body">{{ graph2_other }}円</td>
+        </tr>
+        <tr>
+            <th class="box_item">総支出</th>
+            <td class="box_body">{{ graph2_money }}円</td>
+        </tr>
+    </table>
+</div>
+</div>
 {% endblock content %}

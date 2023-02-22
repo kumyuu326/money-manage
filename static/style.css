@@ -1,5 +1,10 @@
 @charset "utf-8";
 
+body{
+    background-color: #eafcff;
+    margin: 0;
+}
+
 /* index.html */
 .moneylist table{
     border-collapse: separate;
@@ -35,7 +40,7 @@
     border-bottom: solid 1px rgb(176, 174, 174);
 }
 
-.moneylist th, td:not(.delete_button, .update_button){
+.moneylist th, .moneylist td:not(.delete_button, .update_button){
     padding: 4px 12px;
 }
 
@@ -77,19 +82,14 @@ table tfoot{
 }
 
 
-.form_listadd{
-    position: relative;
-    top: 120px;
-    left: 1120px;
-}
 .panel_area{
-    margin-left: 10px;
+    margin-left: 25px;
 }
 
 /* タブの切り替え(収入・支出) */
 .tab_wrap{margin: 10px auto;}
 input[type="radio"]{display:none;}
-.tab_area{font-size:0; margin:0 10px;}
+.tab_area{font-size:0; margin:0 25px;}
 .tab_area label{width:150px; margin:0 5px; display:inline-block; padding:12px 0; color:#999; background:#ddd; text-align:center; font-size:13px; cursor:pointer; transition:ease 0.2s opacity;}
 .tab_area label:hover{opacity:0.5;}
 .panel_area{background:#fff; max-width: 770px; min-width: 580px; width: 72%;}
@@ -137,6 +137,9 @@ h1.header01-logo{
 .header01 a {
     text-decoration: none;
     color: inherit;
+  }
+.header01 a:hover{
+    text-decoration: underline;
   }
 
 .header01 ul{
@@ -236,7 +239,7 @@ input.btn{
 
 
 .add_button button{
-    background: transparent;
+    background: white;
     width: 50px;
     height: 50px;
     border: 1px solid #a8a8a8;
@@ -250,15 +253,6 @@ input.btn{
     gap: 50px;
 }
 
-/* 収益の表示 */
-.profit{
-    display: inline;
-    position: absolute;
-}
-
-.profit h3{
-    border-bottom: 2px solid #000;
-}
 
 /* リスト切り替え(月ごと)のボタン */
 .list_change button{
@@ -266,11 +260,13 @@ input.btn{
     background: transparent;
     color: #4673d8;
 }
+.list_change{
+    margin: 15px;
+}
 
-/* new.html */
-form.add_list{
-    background-color: #f0f2f7;
-    width: 300px;
+.list_change_l{
+    color: #253291;
+    font-weight: bold;
 }
 
 @media screen and (min-width: 620px) {
@@ -347,99 +343,11 @@ form.add_list{
     }
 }
 
-img.graph{
-    width: 500px;
+
+button{
+    cursor: pointer;
 }
 
-/* ログイン画面 ・ 新規登録画面 */
-@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,700);
-
-body {
-  font-family: 'Open Sans', sans-serif;
-}
-
-.login {
-  width: 400px;
-  margin: 16px auto;
-  font-size: 16px;
-}
-
-/* Reset top and bottom margins from certain elements */
-.login-header,
-.login p {
-  margin-top: 0;
-  margin-bottom: 0;
-}
-
-/* The triangle form is achieved by a CSS hack */
-.login-triangle {
-  width: 0;
-  margin-right: auto;
-  margin-left: auto;
-  border: 12px solid transparent;
-  border-bottom-color: #28d;
-}
-
-.login-header {
-  background: #28d;
-  padding: 20px;
-  font-size: 1.4em;
-  font-weight: normal;
-  text-align: center;
-  text-transform: uppercase;
-  color: #fff;
-}
-
-.login-container {
-  background: #ebebeb;
-  padding: 12px;
-}
-
-/* Every row inside .login-container is defined with p tags */
-.login p {
-  padding: 12px;
-}
-
-.login input {
-  box-sizing: border-box;
-  display: block;
-  width: 100%;
-  border-width: 1px;
-  border-style: solid;
-  padding: 16px;
-  outline: 0;
-  font-family: inherit;
-  font-size: 0.95em;
-}
-
-.login input[type="email"],
-.login input[type="password"] {
-  background: #fff;
-  border-color: #bbb;
-  color: #555;
-}
-
-/* Text fields' focus effect */
-.login input[type="email"]:focus,
-.login input[type="password"]:focus {
-  border-color: #888;
-}
-
-.login input[type="submit"] {
-  background: #28d;
-  border-color: transparent;
-  color: #fff;
-  cursor: pointer;
-}
-
-.login input[type="submit"]:hover {
-  background: #17c;
-}
-
-/* Buttons' focus effect */
-.login input[type="submit"]:focus {
-  border-color: #05a;
-}
 
 
 
