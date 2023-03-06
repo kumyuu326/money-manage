@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='login.css')}}">
+{% endblock header %}
+
+{% block content %}
+<header class="header01">
+  <h1 class="header01-logo">LOGO</h1>
+
+  <nav class="header01-nav">
+      <ul class="header01-list">
+          <li class="header01-item"><a href="/graph">グラフ</a></li>
+          <li class="header01-item"><a href="/index">リスト</a></li>
+          <li class="header01-item header01-item--contact"><a href="/logout" role="button" onclick="return confirm('本当にログアウトしてもよろしいですか？')">ログアウト</a></li>
+      </ul>
+  </nav>
+</header>
+
+<div class="login">
+  <div class="login-triangle"></div>
+  
+  <h2 class="login-header">Log in</h2>
+
+{% if error %}
+  <p><strong>Error:</strong>{{ error }}</p>
+{% endif %}
+  <form method="post" class="login-container">
+    <p>{{ email }}</p>
+    <p><input type="text" placeholder="認証コード" name="verificationcode"></p>
+    <p><input type="submit" value="submitcode"></p>
+  </form>
+</div>
+{% endblock content %}

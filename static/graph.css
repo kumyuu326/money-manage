@@ -9,6 +9,10 @@
     margin-left: 50px;
 }
 
+.graph1{
+    border: double 5px #4ec4d3;
+}
+
 .graph1 canvas{
     padding: 15px 20px;
 }

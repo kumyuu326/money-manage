@@ -1,6 +1,11 @@
 from crypt import methods
 import datetime
+import email
 import os
+from urllib.error import HTTPError
+from dotenv import load_dotenv
+from twilio.rest import Client
+from twilio.base.exceptions import TwilioRestException
 from flask import Flask, render_template, request, redirect, session, url_for, make_response
 from flask_login import UserMixin, LoginManager, current_user, login_required, login_user, logout_user
 from flask_sqlalchemy import SQLAlchemy
@@ -15,14 +20,22 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 db = SQLAlchemy(app)
 
+TWILIO_ACCOUNT_SID="AC348d9e64b0f5495d684d1f190ae14093"
+TWILIO_AUTH_TOKEN="25dfbc3d99a1700c5781644d3b58c7b4"
+TWILIO_VERIFY_SERVICE="VAed40ddf358ba4cdac5d5a2fe363cea1d"
+
+client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+
 
 
 #ユーザー名、パスワード
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(50), unique=True)
     username = db.Column(db.String(50), nullable=False, unique=True)
     password = db.Column(db.String(25))
-    def __init__(self, username, password):
+    def __init__(self, email, username, password):
+        self.email = email
         self.username = username
         self.password = password
 
@@ -32,6 +45,7 @@ class Money(db.Model):
     username = db.Column(db.String(50))
     use_date = db.Column(db.Date)
     use_category = db.Column(db.Text())
+    use_detail = db.Column(db.Text())
     detail_text = db.Column(db.Text())
     price = db.Column(db.Integer)
     year = db.Column(db.Integer)
@@ -53,40 +67,90 @@ def load_user(user_id):
 def top():
     return render_template('top.html')
 
+
 #サインアップ
 @app.route('/signup', methods=['GET','POST'])
 def signup():
     if request.method == "POST":
         username = request.form.get('username')
+        email = request.form.get('email')
         password = request.form.get('password')
+        session['username'] = username
+        session['email'] = email
+        send_verification(email)
 
-        user = User(username=username, password=generate_password_hash(password, method='sha256'))
+        user = User(username=username, email=email, password=generate_password_hash(password, method='sha256'))
         
         db.session.add(user)
         db.session.commit()
-        return redirect('/login')
+        return redirect('/verifyme')
     else:
         return render_template('signup.html')
+
+def send_verification(email):
+        verification = client.verify \
+            .services(TWILIO_VERIFY_SERVICE) \
+            .verifications \
+            .create(to=email, channel='email')
+        print(verification.sid)
+
+@app.route('/verifyme', methods=['POST', 'GET'])
+def generate_verification_code():
+    error = None
+    email = session['email']
+    if request.method == 'POST':
+        verification_code = request.form['verificationcode']
+        if check_verification_token(email, verification_code):
+            return redirect('/login')
+        else:
+            error = "Invalid verification code. Please try again."
+            return render_template('verifypage.html', error = error)
+    return render_template('verifypage.html', email = email)
+
+def check_verification_token(phone, token):
+    check = client.verify \
+        .services(TWILIO_VERIFY_SERVICE) \
+        .verification_checks \
+        .create(to=phone, code=token)    
+    return check.status == 'approved'
+
+@app.route('/verifyme2', methods=['POST', 'GET'])
+def generate_verification_code2():
+    error = None
+    email = session['email']
+    if request.method == 'POST':
+        verification_code = request.form['verificationcode']
+        if check_verification_token(email, verification_code):
+            return redirect('/graph')
+        else:
+            error = "Invalid verification code. Please try again."
+            return render_template('verifypage.html', error = error)
+    return render_template('verifypage.html', email = email)
 
 #ログイン
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form.get('username')
+        email = request.form.get('email')
         password = request.form.get('password')
+        session['username'] = username
+        session['email'] = email
+        send_verification(email)
 
-        user = User.query.filter_by(username=username).first()
+        user = User.query.filter_by(username=username, email=email).first()
         if check_password_hash(user.password, password):
             session.permanent = True
             app.permanent_session_lifetime = datetime.timedelta(days=1)
             login_user(user)
-            return redirect('/graph')
+            session['user'] = 'T'
+            return redirect('/verifyme2')
     else:
-        if "username" in session:
-            u = session["username"]
-            user = User.query.filter_by(username=u).first()
+        if "user" in session:
+            username = session["username"]
+            user = User.query.filter_by(username=username).first()
             login_user(user)
-            return redirect(url_for('graph_now'))
+            return redirect('/graph')
         return render_template('login.html')
 
 @app.route('/graph', methods=['POST', 'GET'])
@@ -501,7 +565,6 @@ def ind(today_year, today_month):
 @app.route('/logout')
 @login_required
 def logout():
-    session["username"] = current_user.username
     logout_user()
     return redirect('/')
 
@@ -528,13 +591,13 @@ def new():
         username = current_user.username
         use_date = request.form.get('use_date')
         use_date = datetime.datetime.strptime(use_date, '%Y-%m-%d')
-        use_category = request.form.get('use_category')
+        use_category, use_detail = request.form.get('use_category').split()
         detail_text = request.form.get('detail_text')
         price = request.form.get('price')
         year = int(use_date.year)
         month = int(use_date.month)
 
-        detail = Money(username=username, use_date=use_date, use_category=use_category, detail_text=detail_text, price=price, year=year, month=month)
+        detail = Money(username=username, use_date=use_date, use_category=use_category, use_detail=use_detail, detail_text=detail_text, price=price, year=year, month=month)
         db.session.add(detail)
         db.session.commit()
 
