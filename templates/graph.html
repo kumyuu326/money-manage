@@ -87,17 +87,8 @@
 {% endblock header %}
 
 {% block content %}
-<header class="header01">
-    <h1 class="header01-logo">LOGO</h1>
 
-    <nav class="header01-nav">
-        <ul class="header01-list">
-            <li class="header01-item"><a href="/graph">グラフ</a></li>
-            <li class="header01-item"><a href="/index">リスト</a></li>
-            <li class="header01-item header01-item--contact"><a href="/logout" role="button" onclick="return confirm('本当にログアウトしてもよろしいですか？')">ログアウト</a></li>
-        </ul>
-    </nav>
-</header>
+{% include 'header2.html' %}
 
 {% if button_sel == 1 %}
 <div class="list_change">
@@ -116,6 +107,7 @@
     </form>
 </div>
 {% endif %}
+
 <div class="graph">
 <div class="graph1" style="height: 500px; background-color: white;">
     <canvas id="japanese_people_chart" width="700" height="500" style="background-color: white;"></canvas>

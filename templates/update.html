@@ -20,54 +20,36 @@
                 <th class="listadd_item">カテゴリー</th>
                 <td class="listadd_body">
                     <select name="use_category" class="listadd_select">
-                        {% if list.use_category == '食費' %}
-                        <option value="食費">食費</option>
-                        <option value="">ー</option>
-                        <option value="日用品">日用品</option>
-                        <option value="交通費">交通費</option>
-                        <option value="その他">その他</option>
-                        <option value="収入">収入</option>
-            
-                        {% elif list.use_category == '収入' %}
-                        <option value="収入">収入</option>
-                        <option value="">ー</option>
-                        <option value="食費">食費</option>
-                        <option value="日用品">日用品</option>
-                        <option value="交通費">交通費</option>
-                        <option value="その他">その他</option>
-            
-                        {% elif list.use_category == '日用品' %}
-                        <option value="日用品">日用品</option>
-                        <option value="">ー</option>
-                        <option value="食費">食費</option>
-                        <option value="交通費">交通費</option>
-                        <option value="その他">その他</option>
-                        <option value="収入">収入</option>
-            
-                        {% elif list.use_category == 'その他' %}
-                        <option value="その他">その他</option>
-                        <option value="">ー</option>
-                        <option value="食費">食費</option>
-                        <option value="日用品">日用品</option>
-                        <option value="交通費">交通費</option>
-                        <option value="収入">収入</option>
-
-                        {% elif list.use_category == '交通費' %}
-                        <option value="交通費">交通費</option>
-                        <option value="">ー</option>
-                        <option value="食費">食費</option>
-                        <option value="日用品">日用品</option>
-                        <option value="その他">その他</option>
-                        <option value="収入">収入</option>
-            
-                        {% else %}
-                        <option value="">ー</option>
-                        <option value="食費">食費</option>
-                        <option value="日用品">日用品</option>
-                        <option value="交通費">交通費</option>
-                        <option value="その他">その他</option>
-                        <option value="収入">収入</option>
-                        {% endif %}
+                        <option value="{{ list.use_category }} {{ list.use_detail }}">{{ list.use_category }}</option>
+                        <optgroup label="収入">
+                            <option value="収入 給与所得">給与所得</option>
+                            <option value="収入 臨時収入">臨時収入</option>
+                            <option value="収入 ボーナス">ボーナス</option>
+                        </optgroup>
+                        <optgroup label="食費">
+                            <option value="食費 食料品">食料品</option>
+                            <option value="食費 外食">外食代</option>
+                            <option value="食費 その他">その他</option>
+                        </optgroup>
+                        <optgroup label="日用品">
+                            <option value="日用品 家具">家具</option>
+                            <option value="日用品 衣服">衣服</option>
+                            <option value="日用品 玩具">玩具</option>
+                            <option value="日用品 文房具">文房具</option>
+                            <option value="日用品 スポーツ用品">スポーツ用品</option>
+                            <option value="日用品 ベビー用品">ベビー用品</option>
+                            <option value="日用品 その他">その他</option>
+                        </optgroup>
+                        <optgroup label="交通費">
+                            <option value="交通費 電車代">電車代</option>
+                            <option value="交通費 タクシー代">タクシー代</option>
+                            <option value="交通費 バス代">バス代</option>
+                            <option value="交通費 その他">その他</option>
+                        </optgroup>
+                        <optgroup label="その他">
+                            <option value="その他 チャージ">電子マネーにチャージ</option>
+                            <option value="その他 その他">その他</option>
+                        </optgroup>
                     </select>
                 </td>
             </tr>

@@ -1,12 +1,10 @@
 from crypt import methods
 import datetime
-import email
 import os
-from urllib.error import HTTPError
 from dotenv import load_dotenv
 from twilio.rest import Client
 from twilio.base.exceptions import TwilioRestException
-from flask import Flask, render_template, request, redirect, session, url_for, make_response
+from flask import Flask, flash, render_template, request, redirect, session, url_for, make_response
 from flask_login import UserMixin, LoginManager, current_user, login_required, login_user, logout_user
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import desc, func
@@ -21,8 +19,8 @@ login_manager.init_app(app)
 db = SQLAlchemy(app)
 
 TWILIO_ACCOUNT_SID="AC348d9e64b0f5495d684d1f190ae14093"
-TWILIO_AUTH_TOKEN="25dfbc3d99a1700c5781644d3b58c7b4"
-TWILIO_VERIFY_SERVICE="VAed40ddf358ba4cdac5d5a2fe363cea1d"
+TWILIO_AUTH_TOKEN="8483c012bd3c502cb952edb4dd33c948"
+TWILIO_VERIFY_SERVICE="VA029cb3132a91500b72447e48e631d7d7"
 
 client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
@@ -60,6 +58,29 @@ db.create_all()
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+#メールの送信
+def send_verification(email):
+    try:
+        verification = client.verify \
+            .services(TWILIO_VERIFY_SERVICE) \
+            .verifications \
+            .create(to=email, channel='email')
+        print(verification.sid)
+        return 'T'
+
+    #エラーが起きたときの処理
+    except TwilioRestException as e:
+        print(e)
+        return 'F'
+
+#コードの認証
+def check_verification_token(phone, token):
+    check = client.verify \
+        .services(TWILIO_VERIFY_SERVICE) \
+        .verification_checks \
+        .create(to=phone, code=token)    
+    return check.status == 'approved'
+
 
 
 #トップページ
@@ -67,32 +88,52 @@ def load_user(user_id):
 def top():
     return render_template('top.html')
 
+@app.route('/sign', methods=['POST', 'GET'])
+def sign():
+    error = None
+    email = None
+    if request.method == 'POST':
+        email = request.form.get('email')
+        session['email'] = email
+
+        send_verification(email)
+        error = send_verification(email)
+        print(error)
+        if error != 'T':
+            error = '↑電子メールが無効またはすでに使用されています'
+        else:
+            return redirect(url_for('generate_verification_code'))
+
+
+    return render_template('sign.html', error=error, email=email)
+
 
 #サインアップ
 @app.route('/signup', methods=['GET','POST'])
 def signup():
+    error = None
+    username = None
+    password = None
     if request.method == "POST":
         username = request.form.get('username')
-        email = request.form.get('email')
         password = request.form.get('password')
         session['username'] = username
-        session['email'] = email
-        send_verification(email)
+        email = session['email']
+        u = User.query.filter_by(username=username).first()
 
-        user = User(username=username, email=email, password=generate_password_hash(password, method='sha256'))
+        if u is None:
+            user = User(username=username, email=email, password=generate_password_hash(password, method='sha256'))
+
+            db.session.add(user)
+            db.session.commit()
+            return redirect('/login')
+
+        else:
+            error = 'このユーザー名はすでに使用されています'
         
-        db.session.add(user)
-        db.session.commit()
-        return redirect('/verifyme')
-    else:
-        return render_template('signup.html')
 
-def send_verification(email):
-        verification = client.verify \
-            .services(TWILIO_VERIFY_SERVICE) \
-            .verifications \
-            .create(to=email, channel='email')
-        print(verification.sid)
+    return render_template('signup.html', error=error, username=username, password=password)
+
 
 @app.route('/verifyme', methods=['POST', 'GET'])
 def generate_verification_code():
@@ -101,57 +142,79 @@ def generate_verification_code():
     if request.method == 'POST':
         verification_code = request.form['verificationcode']
         if check_verification_token(email, verification_code):
-            return redirect('/login')
+            return redirect(url_for('signup'))
         else:
-            error = "Invalid verification code. Please try again."
+            error = "このコードは間違っています"
             return render_template('verifypage.html', error = error)
     return render_template('verifypage.html', email = email)
 
-def check_verification_token(phone, token):
-    check = client.verify \
-        .services(TWILIO_VERIFY_SERVICE) \
-        .verification_checks \
-        .create(to=phone, code=token)    
-    return check.status == 'approved'
 
 @app.route('/verifyme2', methods=['POST', 'GET'])
 def generate_verification_code2():
     error = None
     email = session['email']
+    username = session['username']
     if request.method == 'POST':
         verification_code = request.form['verificationcode']
         if check_verification_token(email, verification_code):
+            user = User.query.filter_by(username=username, email=email).first()
+            session.permanent = True
+            app.permanent_session_lifetime = datetime.timedelta(days=1)
+            login_user(user)
+            session['user'] = 'T'
             return redirect('/graph')
         else:
-            error = "Invalid verification code. Please try again."
+            error = "このコードは間違っています"
             return render_template('verifypage.html', error = error)
     return render_template('verifypage.html', email = email)
 
 #ログイン
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    error1 = None
+    error2 = None
+    error3 = None
+    username = None
+    email = None
+    password = None
     if request.method == 'POST':
         username = request.form.get('username')
         email = request.form.get('email')
         password = request.form.get('password')
         session['username'] = username
         session['email'] = email
-        send_verification(email)
 
+        u1 = User.query.filter_by(username=username).first()
+        u2 = User.query.filter_by(email=email).first()
+
+        if u1 is None and u2 is None:
+            error1 = 'このユーザー名は存在しません'
+            error2 = 'この電子メールは存在しません'
+
+        elif u1 and u2 is None:
+            error2 = 'この電子メールは存在しません'
+
+        elif u1 is None and u2:
+            error1 = 'このユーザー名は存在しません'
+
+        else:
+            user = User.query.filter_by(username=username, email=email).first()
+            if check_password_hash(user.password, password):
+                send_verification(email)
+                error2 = send_verification(email)
+
+                return redirect('/verifyme2')
+
+            else:
+                error3 = 'パスワードが間違っています'
+
+    if "user" in session:
+        username = session["username"]
+        email = session['email']
         user = User.query.filter_by(username=username, email=email).first()
-        if check_password_hash(user.password, password):
-            session.permanent = True
-            app.permanent_session_lifetime = datetime.timedelta(days=1)
-            login_user(user)
-            session['user'] = 'T'
-            return redirect('/verifyme2')
-    else:
-        if "user" in session:
-            username = session["username"]
-            user = User.query.filter_by(username=username).first()
-            login_user(user)
-            return redirect('/graph')
-        return render_template('login.html')
+        login_user(user)
+        return redirect('/graph')
+    return render_template('login.html', error1=error1, error2=error2, error3=error3, username=username, email=email, password=password)
 
 @app.route('/graph', methods=['POST', 'GET'])
 @login_required
@@ -284,7 +347,7 @@ def graph_now():
     if graph2_money is None:
         graph2_money = 0
 
-    return render_template('a.html', graph_food_1=graph_food_1, graph_daily_1=graph_daily_1, graph_other_1=graph_other_1, graph_food_2=graph_food_2, graph_daily_2=graph_daily_2, graph_other_2=graph_other_2, graph_food_3=graph_food_3, graph_daily_3=graph_daily_3, 
+    return render_template('graph.html', graph_food_1=graph_food_1, graph_daily_1=graph_daily_1, graph_other_1=graph_other_1, graph_food_2=graph_food_2, graph_daily_2=graph_daily_2, graph_other_2=graph_other_2, graph_food_3=graph_food_3, graph_daily_3=graph_daily_3, 
                                 graph_other_3=graph_other_3, graph_food_4=graph_food_4, graph_daily_4=graph_daily_4, graph_other_4=graph_other_4, graph_food_5=graph_food_5, graph_daily_5=graph_daily_5, graph_other_5=graph_other_5, graph_food_6=graph_food_6,
                                     graph_daily_6=graph_daily_6, graph_other_6=graph_other_6, graph_food_7=graph_food_7, graph_daily_7=graph_daily_7, graph_other_7=graph_other_7, graph_food_8=graph_food_8, graph_daily_8=graph_daily_8, graph_other_8=graph_other_8,
                                         graph_food_9=graph_food_9, graph_daily_9=graph_daily_9, graph_other_9=graph_other_9, graph_food_10=graph_food_10, graph_daily_10=graph_daily_10, graph_other_10=graph_other_10, graph_food_11=graph_food_11, graph_daily_11=graph_daily_11, 
@@ -628,7 +691,7 @@ def u():
         list = Money.query.filter_by(id=id).one()
         list.use_date = request.form["use_date"]
         list.use_date = datetime.datetime.strptime(list.use_date, '%Y-%m-%d')
-        list.use_category = request.form["use_category"]
+        list.use_category, list.use_detail = request.form["use_category"].split()
         list.detail_text = request.form["detail_text"]
         list.price = request.form["price"]
         list.year = int(list.use_date.year)

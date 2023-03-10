@@ -87,3 +87,9 @@ body {
 .login input[type="submit"]:focus {
   border-color: #05a;
 }
+
+.error{
+  font-size: 12px;
+  color: #ff7676;
+  padding-left: 12px;
+}
