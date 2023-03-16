@@ -11,7 +11,7 @@
 <div class="login">
   <div class="login-triangle"></div>
   
-  <h2 class="login-header">Log in</h2>
+  <h2 class="login-header">ログイン</h2>
 
 {% if error %}
   <p><strong>Error:</strong>{{ error }}</p>
@@ -19,7 +19,7 @@
   <form method="post" class="login-container">
     <p>{{ email }}</p>
     <p><input type="text" placeholder="認証コード" name="verificationcode"></p>
-    <p><input type="submit" value="submitcode"></p>
+    <p><input type="submit" value="ログイン"></p>
   </form>
 </div>
 {% endblock content %}

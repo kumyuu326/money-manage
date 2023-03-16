@@ -24,10 +24,11 @@
       {% if error2 %}
       <div class="error">{{ error2 }}</div>
       {% endif %}
-      <p><input type="password" placeholder="Password" name="password" required></p>
+      <p><input type="password" id="password" placeholder="Password" name="password" required></p>
       {% if error3 %}
       <div class="error">{{ error3 }}</div>
       {% endif %}
+      <input type="checkbox" id="password-check"><label for="" style="font-size: 15px;">パスワードを表示する</label>
 
       {% else %}
       <p><input type="text" placeholder="Username" name="username" required autocomplete="off"></p>
@@ -38,12 +39,25 @@
       {% if error2 %}
       <div class="error">{{ error2 }}</div>
       {% endif %}
-      <p><input type="password" placeholder="Password" name="password" required minlength="8"></p>
+      <p><input type="password" id="password" placeholder="Password" name="password" required minlength="8"></p>
       {% if error3 %}
       <div class="error">{{ error3 }}</div>
       {% endif %}
+      <input type="checkbox" id="password-check"><label for="" style="font-size: 15px;">パスワードを表示する</label>
       {% endif %}
-      <p><input type="submit" value="Log in"></p>
+      <p><input type="submit" value="コード送信"></p>
     </form>
   </div>
+
+  <script>
+    const pwd = document.getElementById('password');
+    const pwdCheck = document.getElementById('password-check');
+    pwdCheck.addEventListener('change', function() {
+        if(pwdCheck.checked) {
+            pwd.setAttribute('type', 'text');
+        } else {
+            pwd.setAttribute('type', 'password');
+        }
+    }, false);
+  </script> 
 {% endblock content %}

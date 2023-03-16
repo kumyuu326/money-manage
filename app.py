@@ -19,7 +19,7 @@ login_manager.init_app(app)
 db = SQLAlchemy(app)
 
 TWILIO_ACCOUNT_SID="AC348d9e64b0f5495d684d1f190ae14093"
-TWILIO_AUTH_TOKEN="8483c012bd3c502cb952edb4dd33c948"
+TWILIO_AUTH_TOKEN="286c8f0a5dc5de5a68078925da6a0662"
 TWILIO_VERIFY_SERVICE="VA029cb3132a91500b72447e48e631d7d7"
 
 client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
@@ -134,7 +134,7 @@ def signup():
 
     return render_template('signup.html', error=error, username=username, password=password)
 
-
+#サインアップ時のコード認証
 @app.route('/verifyme', methods=['POST', 'GET'])
 def generate_verification_code():
     error = None
@@ -148,7 +148,7 @@ def generate_verification_code():
             return render_template('verifypage.html', error = error)
     return render_template('verifypage.html', email = email)
 
-
+#ログイン時のコード認証
 @app.route('/verifyme2', methods=['POST', 'GET'])
 def generate_verification_code2():
     error = None
@@ -208,6 +208,7 @@ def login():
             else:
                 error3 = 'パスワードが間違っています'
 
+    #セッションにログイン情報があるとき自動でログインする
     if "user" in session:
         username = session["username"]
         email = session['email']
@@ -216,6 +217,7 @@ def login():
         return redirect('/graph')
     return render_template('login.html', error1=error1, error2=error2, error3=error3, username=username, email=email, password=password)
 
+#現在の年のグラフを表示
 @app.route('/graph', methods=['POST', 'GET'])
 @login_required
 def graph_now():
@@ -359,6 +361,7 @@ def graph_now():
                                                                 gt_1=gt_1, gt_2=gt_2, gt_3=gt_3, gt_4=gt_4, gt_5=gt_5, gt_6=gt_6, gt_7=gt_7, gt_8=gt_8, gt_9=gt_9, gt_10=gt_10, gt_11=gt_11, gt_12=gt_12,
                                                                     button_sel=button_sel, today_year=today_year)
 
+#年を変更した後のグラフを表示
 @app.route('/graph/<today_year>', methods=['POST', 'GET'])
 @login_required
 def graph(today_year):
@@ -489,7 +492,7 @@ def graph(today_year):
     if graph2_money is None:
         graph2_money = 0
 
-    return render_template('a.html', graph_food_1=graph_food_1, graph_daily_1=graph_daily_1, graph_other_1=graph_other_1, graph_food_2=graph_food_2, graph_daily_2=graph_daily_2, graph_other_2=graph_other_2, graph_food_3=graph_food_3, graph_daily_3=graph_daily_3, 
+    return render_template('graph.html', graph_food_1=graph_food_1, graph_daily_1=graph_daily_1, graph_other_1=graph_other_1, graph_food_2=graph_food_2, graph_daily_2=graph_daily_2, graph_other_2=graph_other_2, graph_food_3=graph_food_3, graph_daily_3=graph_daily_3, 
                                 graph_other_3=graph_other_3, graph_food_4=graph_food_4, graph_daily_4=graph_daily_4, graph_other_4=graph_other_4, graph_food_5=graph_food_5, graph_daily_5=graph_daily_5, graph_other_5=graph_other_5, graph_food_6=graph_food_6,
                                     graph_daily_6=graph_daily_6, graph_other_6=graph_other_6, graph_food_7=graph_food_7, graph_daily_7=graph_daily_7, graph_other_7=graph_other_7, graph_food_8=graph_food_8, graph_daily_8=graph_daily_8, graph_other_8=graph_other_8,
                                         graph_food_9=graph_food_9, graph_daily_9=graph_daily_9, graph_other_9=graph_other_9, graph_food_10=graph_food_10, graph_daily_10=graph_daily_10, graph_other_10=graph_other_10, graph_food_11=graph_food_11, graph_daily_11=graph_daily_11, 

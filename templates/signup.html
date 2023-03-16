@@ -10,7 +10,7 @@
 {% include 'header.html' %}
 
 <div class="login">
-  <h2 class="login-header">Sign up</h2>
+  <h2 class="login-header">新規登録</h2>
   
   <form method="post" class="login-container">
     {% if username and password %}
@@ -18,15 +18,29 @@
     {% if error %}
       <div class="error">{{ error }}</div>
     {% endif %}
-      <p><input type="text" placeholder="Password" name="password" autocomplete="off" minlength="8" value="{{ password }}" required></p>
+      <p><input type="text" id="password" placeholder="Password" name="password" autocomplete="off" minlength="8" value="{{ password }}" required></p>
+      <input type="checkbox" id="password-check"><label for="" style="font-size: 15px;">パスワードを表示する</label>
     {% else %}
       <p><input type="text" placeholder="Username" name="username" required></p>
     {% if error %}
       <div class="error">{{ error }}</div>
     {% endif %}
-      <p><input type="text" placeholder="Password" name="password" autocomplete="off" minlength="8" required></p>
+      <p><input type="password" id="password" placeholder="Password" name="password" autocomplete="off" minlength="8" required></p>
+      <input type="checkbox" id="password-check"><label for="" style="font-size: 15px;">パスワードを表示する</label>
     {% endif %}
     <p><input type="submit" value="Sign up"></p>
   </form>
 </div>
+
+<script>
+  const pwd = document.getElementById('password');
+  const pwdCheck = document.getElementById('password-check');
+  pwdCheck.addEventListener('change', function() {
+      if(pwdCheck.checked) {
+          pwd.setAttribute('type', 'text');
+      } else {
+          pwd.setAttribute('type', 'password');
+      }
+  }, false);
+</script> 
 {% endblock content %}
