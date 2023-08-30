@@ -19,16 +19,16 @@
       <div class="error">{{ error }}</div>
     {% endif %}
       <p><input type="text" id="password" placeholder="Password" name="password" autocomplete="off" minlength="8" value="{{ password }}" required></p>
-      <input type="checkbox" id="password-check"><label for="" style="font-size: 15px;">パスワードを表示する</label>
+      <input type="checkbox" id="password-check"><label for="password-check" style="font-size: 15px;">パスワードを表示する</label>
     {% else %}
       <p><input type="text" placeholder="Username" name="username" required></p>
     {% if error %}
       <div class="error">{{ error }}</div>
     {% endif %}
       <p><input type="password" id="password" placeholder="Password" name="password" autocomplete="off" minlength="8" required></p>
-      <input type="checkbox" id="password-check"><label for="" style="font-size: 15px;">パスワードを表示する</label>
+      <input type="checkbox" id="password-check"><label for="password-check" style="font-size: 15px;">パスワードを表示する</label>
     {% endif %}
-    <p><input type="submit" value="Sign up"></p>
+    <p><input type="submit" value="Sign up" id="signup"></p>
   </form>
 </div>
 
